@@ -26,14 +26,14 @@ class BackendApplicationTests {
 	@Test
 	void testWebSocketEndpointExists() throws Exception {
 		// Test semplice che verifica che l'endpoint WebSocket sia disponibile
-		String url = "http://localhost:" + port + "/gs-guide-websocket";
+		String url = "http://localhost:" + port + "/masterMind";
 		URI uri = new URI(url);
 		
 		// Verifica che l'URI sia valido
 		assertNotNull(uri);
 		assertEquals("localhost", uri.getHost());
 		assertEquals(port, uri.getPort());
-		assertEquals("/gs-guide-websocket", uri.getPath());
+		assertEquals("/masterMind", uri.getPath());
 		
 		System.out.println("✅ WebSocket endpoint configurato su: " + url);
 	}

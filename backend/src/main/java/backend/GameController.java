@@ -10,8 +10,9 @@ import org.springframework.web.util.HtmlUtils;
 public class GameController {
 	
     @MessageMapping("/")
-    @SendToUser("/queue/")  // Invia solo a chi ha fatto la domanda
-    public String handleMessage(String message) {
-        return "Hello, " + HtmlUtils.htmlEscape(message) + "!";
+    @SendToUser("/queue/reply")  // Invia solo a chi ha fatto la domanda
+    public String handeMessage(String message) {
+        String response = "Hello, " + HtmlUtils.htmlEscape(message) + "!";
+        return response;
     }
 }

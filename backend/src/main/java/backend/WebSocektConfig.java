@@ -23,8 +23,14 @@ public class WebSocektConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        // WebSocket nativo
         registry.addEndpoint("/masterMind")
             .setAllowedOriginPatterns("http://localhost:3000");
+            
+        // WebSocket con SockJS fallback
+        registry.addEndpoint("/masterMind-sockjs")
+            .setAllowedOriginPatterns("http://localhost:3000")
+            .withSockJS();
     }
 
     @Override
