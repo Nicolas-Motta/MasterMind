@@ -76,6 +76,7 @@ class WebSocketTester {
                 onDisconnect: () => {
                     console.log('🔌 WebSocket disconnesso');
                     this.isConnected = false;
+                    console.log('\n✅ === TEST COMPLETATO ===');
                 }
             });
 
@@ -199,7 +200,7 @@ class WebSocketTester {
             console.log('\n3️⃣ Test disconnessione...');
             this.disconnect();
 
-            console.log('\n✅ === TEST COMPLETATO ===');
+
 
         } catch (error) {
             console.error('❌ Errore durante il test:', error);
