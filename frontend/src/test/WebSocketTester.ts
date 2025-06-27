@@ -54,7 +54,7 @@ class WebSocketTester {
 
                 // Callback in caso di errore
                 onStompError: (frame) => {
-                    console.error('❌ Errore STOMP:', frame);
+                    //? console.error('❌ Errore STOMP:', frame);
                     resolve({
                         success: false,
                         message: `Errore STOMP: ${frame.headers.message || 'Unknown error'}`,
@@ -64,7 +64,7 @@ class WebSocketTester {
 
                 // Callback per errori WebSocket
                 onWebSocketError: (error) => {
-                    console.error('❌ Errore WebSocket:', error);
+                    //? console.error('❌ Errore WebSocket:', error);
                     resolve({
                         success: false,
                         message: `Errore WebSocket: ${error}`,
@@ -165,31 +165,68 @@ class WebSocketTester {
     }
 
     /**
-     * Test completo con fallback automatico
+     * Tenta la connessione più volte con tempi di attesa progressivi
+     */
+    private async testConnectionWithRetries(useSockJS: boolean, maxRetries: number = 5): Promise<WebSocketTestResult> {
+        const connectionType = useSockJS ? 'SockJS' : 'WebSocket nativo';
+        console.log(`\n🔄 Tentativo connessione ${connectionType} con ${maxRetries} tentativi...`);
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            console.log(`\n📡 Tentativo ${attempt}/${maxRetries} per ${connectionType}...`);
+            
+            const result = await this.testConnection(useSockJS);
+            
+            if (result.success) {
+                console.log(`✅ Connessione riuscita al tentativo ${attempt}!`);
+                return result;
+            }
+            
+            console.log(`❌ Tentativo ${attempt} fallito: ${result.message}`);
+            
+            // Se non è l'ultimo tentativo, aspetta progressivamente più tempo
+            if (attempt < maxRetries) {
+                const waitTime = (attempt + 1) * 1000; // 2s, 3s, 4s, 5s
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+                
+                // Disconnetti se necessario prima del prossimo tentativo
+                this.disconnect();
+            }
+        }
+
+        return {
+            success: false,
+            message: `Tutti i ${maxRetries} tentativi per ${connectionType} sono falliti`,
+            timestamp: new Date().toISOString()
+        };
+    }
+
+    /**
+     * Test completo con fallback automatico e tentativi multipli
      */
     async runFullTest(): Promise<void> {
         console.log('🧪 === INIZIO TEST WEBSOCKET ===');
 
         try {
-            // Test 1: Prova prima WebSocket nativo
-            console.log('\n1️⃣ Test connessione WebSocket nativo...');
-            let connectionResult = await this.testConnection(false);
-            console.log('Risultato connessione nativa:', connectionResult);
+            // Test 1: Prova prima WebSocket nativo con 5 tentativi
+            console.log('\n1️⃣ Test connessione WebSocket nativo (5 tentativi)...');
+            let connectionResult = await this.testConnectionWithRetries(false, 5);
+            console.log('Risultato finale connessione nativa:', connectionResult);
 
-            // Se fallisce, prova SockJS
+            // Se fallisce, prova SockJS con 5 tentativi
             if (!connectionResult.success) {
-                console.log('\n🔄 Tentativo fallback con SockJS...');
-                connectionResult = await this.testConnection(true);
-                console.log('Risultato connessione SockJS:', connectionResult);
+                console.log('\n🔄 Tentativo fallback con SockJS (5 tentativi)...');
+                connectionResult = await this.testConnectionWithRetries(true, 5);
+                console.log('Risultato finale connessione SockJS:', connectionResult);
             }
 
             if (!connectionResult.success) {
-                console.log('❌ Test fallito: impossibile connettersi');
+                console.log('❌ Test fallito: impossibile connettersi dopo tutti i tentativi');
                 return;
             }
 
             // Aspetta un po' per stabilizzare la connessione
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log('\n⏳ Stabilizzazione connessione...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
             // Test 2: Invio/Ricezione messaggi
             console.log('\n2️⃣ Test invio/ricezione messaggi...');
