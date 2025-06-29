@@ -10,12 +10,6 @@
 
 }
 
-.game-button:hover::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: 13px;
-    pointer-events: none;
-    z-index: 1;
+.game-button:hover {
+    filter: brightness(0.85);
 }
