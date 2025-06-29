@@ -1,5 +1,5 @@
 .Lobby {
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    background: url('../../assets/Image/sfondoSpazio.jpg') center center/cover no-repeat;
     height: 100vh;
     display: flex;
     flex-direction: column;
