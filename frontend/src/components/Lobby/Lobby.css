@@ -1,5 +1,5 @@
 .Lobby {
-    background: url('../../assets/Image/sfondoSpazio.jpg') center center/cover no-repeat;
+    background: url('../../assets/Images/sfondoSpazio.jpg') center center/cover no-repeat;
     height: 100vh;
     display: flex;
     flex-direction: column;
