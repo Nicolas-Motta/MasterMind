@@ -1,0 +1,18 @@
+.window {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #23232b;
+    border-color: #6b7280;
+    border: 3px solid;
+    border-radius: 10px;
+
+    width: 30vw;
+    padding: 20px;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+}
