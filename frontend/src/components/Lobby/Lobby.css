@@ -43,7 +43,7 @@
     margin-right: 5vw;
 }
 
-.Lobby #carrerMode {
+.Lobby #careerMode {
     background: linear-gradient(45deg, #2d8f2d, #4ade80);
     width: var(--botton-width);
     height: var(--button-height);
