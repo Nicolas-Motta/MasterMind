@@ -61,7 +61,7 @@
     height: var(--button-height);
 }
 
-.Lobby #settingsMode {
+.Lobby #optionMode {
     background: linear-gradient(45deg, #6b7280, #9ca3af);
     width: var(--botton-width);
     height: var(--button-height);
