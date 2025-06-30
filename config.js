@@ -1,4 +1,4 @@
-import {app, BrowserWindow} from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
 import { exec } from 'child_process';
 
 function createWindow () {
@@ -9,6 +9,7 @@ function createWindow () {
         minHeight: 600,
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
         }
     })
 
@@ -16,6 +17,11 @@ function createWindow () {
 }
 
 app.whenReady().then(createWindow);
+
+// Handler per chiudere l'app dal frontend
+ipcMain.on('quit-app', () => {
+    killAllProcesses();
+});
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
