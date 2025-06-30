@@ -5,11 +5,14 @@ type ButtonProps = {
     children: React.ReactNode
     onClick?: () => void
     id?: string
+    className?: string
 }
 
-export default function Button({ children, onClick, id }: ButtonProps) {
+export default function Button({ children, onClick, id, className }: ButtonProps) {
+    const buttonClasses = `game-button ${className || ''}`.trim()
+    
     return (
-        <button className="game-button" id={id} onClick={onClick}>
+        <button className={buttonClasses} id={id} onClick={onClick}>
             {children}
         </button>
     )
