@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../Button/Button";
 import OptionMenu from "../OptionMenu/OptionMenu";
-import { quitApp } from "../../utils/electronUtils";
+import Window from "../Window/Window";
 
 import "./Game.css";
 
@@ -29,15 +29,15 @@ export default function Game() {
     return (
         <div className="Game">
             <div className="homeBall">
-
+                
             </div>
 
-            <div className="gameSettings">
-                <Button className="gameButton" id="newButton" onClick={() => restartGame()}>NEW GAME</Button>
-                <Button id="optionMode" onClick={() => toggleOptionMenu(<OptionMenu />)}>OPTION</Button>
+            <Window className="gameSettings">
+                <Button className="newGameButton" id="newButton" onClick={() => restartGame()}>NEW GAME</Button>
+                <Button className="optionButton" id="optionMode" onClick={() => toggleOptionMenu(<OptionMenu />)}>OPTION</Button>
                 <Button onClick={() => goToLobby()}>MAIN MENU</Button>
-                <Button onClick={quitApp}>QUIT</Button>
-            </div>
+                <Button className="quitButton">QUIT</Button>
+            </Window>
 
             {optionMenu}
         </div>
