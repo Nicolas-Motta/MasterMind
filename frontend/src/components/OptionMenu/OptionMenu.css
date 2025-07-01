@@ -16,20 +16,6 @@
     flex-direction: column;
 }
 
-.optionMenu .optionButton {
-    background: linear-gradient(45deg, #1e40af, #3b82f6);
-    height: 8vh;
-    margin: 0.6vh;
-
-    font-size: 3vh;
-}
-
 .optionMenu #statsButton {
     background: linear-gradient(45deg, #ff9800, #ffb74d);
-}
-
-.optionMenu h3 {
-    text-align: center;
-    font-size: 4vh;
-    margin: 3vh;
 }

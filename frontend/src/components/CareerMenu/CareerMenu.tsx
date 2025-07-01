@@ -14,9 +14,9 @@ export default function CareerMenu() {
     return (
         <Window className="careerMenu">
             <h3>Career</h3>
-            <Button className="gameButton" id="newButton" onClick={() => goToGame()}>NEW GAME</Button>
-            <Button className="gameButton" id="continueButton">CONTINUE</Button>
-            <Button className="gameButton" id="settingsButton">GAME SETTINGS</Button>
+            <Button id="newButton" onClick={() => goToGame()}>NEW GAME</Button>
+            <Button id="continueButton">CONTINUE</Button>
+            <Button id="settingsButton">GAME SETTINGS</Button>
         </Window>
     );
 }
