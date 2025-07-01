@@ -11,3 +11,19 @@ body {
 * {
   font-family: 'Minecraft';
 }
+
+.newGameButton {
+    background: linear-gradient(45deg, #2d8f2d, #4ade80) !important;
+}
+
+.optionButton {
+    background: linear-gradient(45deg, #6b7280, #9ca3af) !important;
+}
+
+.quitButton {
+    background: linear-gradient(45deg, #b91c1c, #f87171) !important;
+}
+
+.statsButton {
+    background: linear-gradient(45deg, #ff9800, #ffb74d) !important;
+}

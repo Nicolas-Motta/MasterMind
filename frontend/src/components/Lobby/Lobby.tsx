@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import Button from "../Button/Button"
 import CareerMenu from "../CareerMenu/CareerMenu"
 import OptionMenu from "../OptionMenu/OptionMenu"
-import { quitApp } from "../../utils/electronUtils"
 import "./Lobby.css"
 
 export default function Lobby() {
@@ -33,7 +32,7 @@ export default function Lobby() {
             <div className="buttons">
                 <Button id="careerMode" onClick={() => toggleCareertMenu(<CareerMenu />)}>CAREER</Button>
                 <Button id="infinityMode">INFINITY</Button>
-                <Button id='quitMode' onClick={quitApp}>QUIT</Button>
+                <Button id='quitMode'>QUIT</Button>
                 <Button id="optionMode" onClick={() => toggleOptionMenu(<OptionMenu />)}>OPTION</Button>
             </div>
             {careertMenu}

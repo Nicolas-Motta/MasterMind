@@ -7,9 +7,9 @@ export default function OptionMenu() {
     return (
         <Window className="optionMenu">
             <h3>Option</h3>
-            <Button id="statsButton">STATS</Button>
-            <Button id="soundButton">SOUND</Button>
-            <Button id="grafichButton">GRAFICH</Button>
+            <Button className="statsButton">STATS</Button>
+            <Button>SOUND</Button>
+            <Button>GRAFICH</Button>
         </Window>
     );
 }
