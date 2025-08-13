@@ -1,0 +1,20 @@
+{
+  "name": "mastermind",
+  "version": "0.1.0",
+  "main": "config.js",
+  "scripts": {
+    "java": "cd ./backend && mvnw.cmd spring-boot:run",
+    "react": "cd ./frontend && npm run dev",
+    "electron": "electron .",
+    "project": "concurrently \"npm run java\" \"npm run react\" \"npm run electron\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "electron": "^37.1.0",
+    "electron-builder": "^26.0.12"
+  }
+}
