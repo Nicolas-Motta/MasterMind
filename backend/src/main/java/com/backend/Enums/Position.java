@@ -1,0 +1,12 @@
+package com.backend.Enums;
+
+public enum Position {
+    HOME,
+    LABEL1,
+    LABEL2,
+    LABEL3,
+    LABEL4,
+    LABEL5,
+    LABEL6,
+    RESULT
+}
