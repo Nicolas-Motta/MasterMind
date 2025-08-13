@@ -1,0 +1,61 @@
+.Lobby {
+    background: url('../../assets/Images/sfondoSpazio.jpg') center center/cover no-repeat;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #ffffff;
+    padding: 0;
+
+    --botton-width: 20vw;
+    --button-height: 10vh;
+}
+
+.Lobby h1{
+    text-align: center;
+    margin-top: 27vh;
+    margin-bottom: clamp(3vh, 15vh, 6vh);
+    font-size: 14vh;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 
+        0 0 0.2vw rgba(255, 255, 255, 0.4),
+        0 0 0.4vw rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.1em;
+    text-shadow: 
+        0 0 0.6vw rgba(255, 255, 255, 0.5),
+        0 0 1.2vw rgba(255, 255, 255, 0.3),
+        0 0 1.8vw rgba(255, 255, 255, 0.2);
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+.Lobby .buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(var(--botton-width) * 4 + 0.6vw * 3);
+    gap: 1.1vw;
+    margin-top: 23vh;
+    background: #23232b;
+    border-radius: 1.4vw;
+    padding: 1vw;
+    margin-left: 5vw;
+    margin-right: 5vw;
+}
+
+.Lobby .buttons Button {
+    width: var(--botton-width);
+    height: var(--button-height);
+}
+
+.Lobby .careerButton {
+    background: linear-gradient(45deg, #2d8f2d, #4ade80);
+}
+
+.Lobby .infinityButton {
+    background: linear-gradient(45deg, #1e40af, #3b82f6);
+}
+
+.Lobby .buttons button:first-child, .Lobby .buttons button:last-child {
+    height: calc(var(--button-height) * 1.2) !important;
+}
