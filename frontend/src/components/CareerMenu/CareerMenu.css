@@ -1,0 +1,21 @@
+.careerMenu {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #23232b;
+    border-color: #6b7280;
+    border: 3px solid;
+    border-radius: 10px;
+
+    width: 30vw;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.careerMenu #newButton {
+    background: linear-gradient(45deg, #2d8f2d, #4ade80);
+}
