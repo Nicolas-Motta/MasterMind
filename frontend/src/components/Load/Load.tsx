@@ -12,7 +12,6 @@ export default function Load() {
         let timeoutId: NodeJS.Timeout | null = null;
         const ping = async () => {
             if (!active) return;
-            console.log("Tentativo di ping al backend...");
             try {
                 const response = await fetch("/MasterMind/ping", {
                     method: "POST",
@@ -23,7 +22,6 @@ export default function Load() {
                 });
                 if (!response.ok) throw new Error("No response");
                 const data = await response.json();
-                console.log("Risposta dal backend:", data);
                 if (data.checkResponse === "pong") {
                     active = false;
                     navigate("/lobby");
