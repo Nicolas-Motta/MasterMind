@@ -1,19 +1,15 @@
 package com.backend.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Message {
-    private String text;
+    @JsonProperty("instraction")
+    private String instraction;
 
-    public Message() {}
-
-    public Message(String text) {
-        this.text = text;
+    public String getInstraction() {
+        return instraction;
     }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
+    public void setInstraction(String instraction) {
+        this.instraction = instraction;
     }
 }

@@ -1,10 +1,12 @@
 package com.backend;
 
 import java.io.Serializable;
+import org.springframework.stereotype.Component;
 import java.util.Random;
 
 import com.backend.Enums.*;
 
+@Component
 public class ObjectGame implements Serializable {
     private Ball[] based;
     private Ball[][] labels;
