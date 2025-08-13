@@ -22,6 +22,12 @@ public class Ball {
         this.color = color;
         this.position = position;
     }
+
+    public Ball(String id, Color color, Position position) {
+        this.id = id;
+        this.color = color;
+        this.position = position;
+    }
     
     public Color getColor() {
         return color;
