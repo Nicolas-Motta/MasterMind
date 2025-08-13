@@ -1,4 +1,4 @@
-.game-button {
+Button {
     color: white;
     font-size: 4vh;
     text-transform: uppercase;
@@ -10,6 +10,26 @@
 
 }
 
-.game-button:hover {
+Button:hover {
     filter: brightness(0.85);
+}
+
+Button.quitButton {
+    background: linear-gradient(45deg, #b91c1c, #f87171)!important;
+}
+
+Button.newGameButton {
+    background: linear-gradient(45deg, #2d8f2d, #4ade80)!important;
+}
+
+Button.continueGameButton {
+    background: linear-gradient(45deg, #1e40af, #3b82f6)!important;
+}
+
+Button.mainMenuButton {
+    background: linear-gradient(45deg, #1e40af, #3b82f6)!important;
+}
+
+Button.optionButton {
+    background: linear-gradient(45deg, #6b7280, #9ca3af)!important;
 }
