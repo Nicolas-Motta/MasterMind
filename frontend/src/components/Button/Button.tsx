@@ -10,8 +10,7 @@ type ButtonProps = {
     disabled?: boolean
 }
 
-export default function Button({ children, onClick, id, className, disabled }: ButtonProps) {
-    const buttonClasses = `game-button ${className || ''}`.trim()
+export default function Button({ children, onClick, id, className, disabled = false }: ButtonProps) {
 
     if (className === "quitButton") {
         onClick = () => quitApp();
@@ -22,7 +21,7 @@ export default function Button({ children, onClick, id, className, disabled }: B
     }
 
     return (
-        <button className={buttonClasses} id={id} onClick={onClick} disabled={disabled}>
+        <button className={className} id={id} onClick={!disabled ? onClick : undefined}>
             {children}
         </button>
     )

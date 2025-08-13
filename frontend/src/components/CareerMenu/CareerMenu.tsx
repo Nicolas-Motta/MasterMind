@@ -9,11 +9,9 @@ export default function CareerMenu() {
             <h3>Career</h3>
             <Button 
                 className="newGameButton" 
-                disabled={false}
             > NEW GAME</Button>
             <Button
                 className="continueGameButton"
-                disabled={false}
             > CONTINUE</Button>
             <Button>GAME SETTINGS</Button>
         </Window>
