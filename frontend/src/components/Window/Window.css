@@ -1,0 +1,32 @@
+.window {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #23232b;
+    border-color: #6b7280;
+    border: 3px solid;
+    border-radius: 10px;
+
+    width: 30vw;
+    padding: 20px;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.window Button {
+    background: linear-gradient(45deg, #1e40af, #3b82f6);
+    height: 8vh;
+    margin: 0.6vh;
+
+    font-size: 3vh;
+}
+
+.window h3 {
+    text-align: center;
+    font-size: 4vh;
+    margin: 3vh;
+}
