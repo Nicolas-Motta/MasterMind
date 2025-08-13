@@ -1,0 +1,21 @@
+.optionMenu {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #23232b;
+    border-color: #6b7280;
+    border: 3px solid;
+    border-radius: 10px;
+
+    width: 30vw;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.optionMenu #statsButton {
+    background: linear-gradient(45deg, #ff9800, #ffb74d);
+}
