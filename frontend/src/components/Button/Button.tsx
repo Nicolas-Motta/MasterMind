@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useState} from "react"
 import "./Button.css"
 import { useNavigate } from "react-router-dom";
 
@@ -11,17 +11,27 @@ type ButtonProps = {
 }
 
 export default function Button({ children, onClick, id, className, disabled = false }: ButtonProps) {
+    const [isDisabled, setIsDisabled] = useState(disabled);
+    const navigate = useNavigate();
 
     if (className === "quitButton") {
         onClick = () => quitApp();
     }
-    
+
     if (className === "mainMenuButton") {
-        onClick = () => mainMenu();
+        onClick = () => mainMenu(navigate);
+    }
+
+    if (className === "newGameButton") {
+        onClick = async () => {
+            setIsDisabled(true);
+            await newGame(navigate);
+            setIsDisabled(false);
+        };
     }
 
     return (
-        <button className={className} id={id} onClick={!disabled ? onClick : undefined}>
+        <button className={className} id={id} onClick={!isDisabled ? onClick : undefined}>
             {children}
         </button>
     )
@@ -44,8 +54,30 @@ function quitApp() {
     }
 }
 
-function mainMenu() {
-    const navigate = useNavigate();
+function mainMenu(navigate: ReturnType<typeof useNavigate>) {
     navigate("/lobby");
 }
 
+async function newGame(navigate: ReturnType<typeof useNavigate>) {    
+    try {
+        const response = await fetch("/MasterMind/newGame", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ instraction: "newGame" })
+        });
+
+        if (!response.ok) throw new Error("No response");
+
+        const data = await response.json();
+
+        if (data.checkResponse === true) {
+            navigate("/game");
+        } else {
+            alert("Errore: Impossibile creare una nuova partita");
+        }
+    } catch (error) {
+        alert("Errore di connessione. Riprova più tardi.");
+    }
+}
