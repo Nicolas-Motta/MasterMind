@@ -7,6 +7,7 @@ import com.backend.ObjectGame;
 
 @RestController
 @RequestMapping("/MasterMind")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SystemController {
 
     @Autowired

@@ -4,12 +4,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './main.css'
 import Lobby from './Components/Lobby/Lobby';
 import Game from './Components/Game/Game';
+import Load from './Components/Load/Load';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={<Lobby/>}/>
+          <Route path="/" element={<Load/>}/>
+          <Route path="/lobby" element={<Lobby/>}/>
           <Route path="/game" element={<Game/>}/>
       </Routes>
     </BrowserRouter>
