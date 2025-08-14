@@ -73,7 +73,7 @@ async function newGame(navigate: ReturnType<typeof useNavigate>) {
         const data = await response.json();
 
         if (data.checkResponse === true) {
-            navigate("/game");
+            navigate("/game", { state: { timestamp: Date.now() } });
         } else {
             alert("Errore: Impossibile creare una nuova partita");
         }

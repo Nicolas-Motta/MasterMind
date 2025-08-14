@@ -8,7 +8,9 @@ import Load from './Components/Load/Load';
 
 function GameReRender() {
   const location = useLocation();
-  return <Game key={location.pathname} />;
+  //? Usa sia il pathname che lo state per forzare il remount
+  const key = location.pathname + (location.state?.timestamp || '');
+  return <Game key={key} />;
 }
 
 createRoot(document.getElementById('root')!).render(
