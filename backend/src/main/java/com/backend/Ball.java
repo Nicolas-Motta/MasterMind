@@ -17,6 +17,7 @@ public class Ball {
             case YELLOW -> "3";
             case ORANGE -> "4";
             case PURPLE -> "5";
+            case ERROR -> "E";
             } +
             (int)(Math.random() * 100);
         this.color = color;
@@ -52,6 +53,7 @@ public class Ball {
             case '3' -> Color.YELLOW;
             case '4' -> Color.ORANGE;
             case '5' -> Color.PURPLE;
+            case 'E' -> Color.ERROR;
             default -> throw new IllegalArgumentException("Codice colore non valido nell'ID: " + colorCode);
         };
     }

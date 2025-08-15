@@ -1,5 +1,5 @@
 package com.backend.Enums;
 
 public enum Color {
-    RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE
+    RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, ERROR
 }
