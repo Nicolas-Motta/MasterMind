@@ -7,7 +7,9 @@
     min-height: 100vh;
 }
 
-.Load svg {
+.loading-logo {
+    width: 20vw;
+    height: 20vw;
     display: block;
     animation: spin 2s linear infinite;
 }

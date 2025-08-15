@@ -3,6 +3,7 @@
 import "./Load.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import logoImage from "../../assets/Images/logo.png";
 
 export default function Load() {
     const navigate = useNavigate();
@@ -41,9 +42,7 @@ export default function Load() {
 
     return (
         <div className="Load">
-            <svg width="100" height="100">
-                <rect x="10" y="10" width="80" height="80" fill="blue" />
-            </svg>
+            <img src={logoImage} alt="Loading..." className="loading-logo" />
         </div>
     );
 }
