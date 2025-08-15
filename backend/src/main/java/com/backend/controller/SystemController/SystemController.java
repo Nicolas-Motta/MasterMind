@@ -1,9 +1,11 @@
-package com.backend.controller;
+package com.backend.controller.SystemController;
 
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.backend.ObjectGame;
+import com.backend.controller.CheckResponse;
+import com.backend.controller.Message;
 
 @RestController
 @RequestMapping("/MasterMind")
