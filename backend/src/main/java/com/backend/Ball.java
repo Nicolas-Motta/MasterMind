@@ -29,6 +29,33 @@ public class Ball {
         this.position = position;
     }
     
+    // Costruttore che ricava il colore dall'ID e richiede la posizione
+    public Ball(String id, Position position) {
+        this.id = id;
+        this.position = position;
+        this.color = deriveColorFromId(id);
+    }
+    
+    // Metodo helper per ricavare il colore dall'ID
+    private Color deriveColorFromId(String id) {
+        if (id == null || id.length() < 3) {
+            throw new IllegalArgumentException("ID deve essere almeno di 3 caratteri");
+        }
+        
+        // Estrae il terzo carattere dell'ID per determinare il colore
+        char colorCode = id.charAt(2);
+        
+        return switch (colorCode) {
+            case '0' -> Color.RED;
+            case '1' -> Color.BLUE;
+            case '2' -> Color.GREEN;
+            case '3' -> Color.YELLOW;
+            case '4' -> Color.ORANGE;
+            case '5' -> Color.PURPLE;
+            default -> throw new IllegalArgumentException("Codice colore non valido nell'ID: " + colorCode);
+        };
+    }
+    
     public Color getColor() {
         return color;
     }
