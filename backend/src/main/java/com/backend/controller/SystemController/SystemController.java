@@ -27,7 +27,7 @@ public class SystemController {
     @PostMapping("/newGame")
     public CheckResponse createNewGame(@RequestBody Message message) {
         if ("newGame".equals(message.getInstraction())) {
-            this.game = new ObjectGame();
+            this.game.newGame(); // Chiama newGame() sull'istanza esistente
             return new CheckResponse(true);
         } else {
             return new CheckResponse(false);
