@@ -17,3 +17,36 @@
 
     padding-bottom: 10px;
 }
+
+.Game .homeBall {
+    top: 12%;
+    left: 18%;
+    transform: translateX(-50%);
+
+    width: 20vw;
+
+    justify-items: center;
+
+    padding-top: 30px;
+    padding-bottom: 30px;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1vw;
+
+    /* Enhanced dark bevel effect with larger borders */
+    box-shadow:
+        inset 15px 0 20px -10px rgba(0, 0, 0, 0.7),
+        /* Left dark shadow - larger */
+        inset -15px 0 20px -10px rgba(0, 0, 0, 0.7),
+        /* Right dark shadow - larger */
+        inset 0 15px 20px -10px rgba(0, 0, 0, 0.5),
+        /* Top shadow - larger */
+        inset 0 -15px 20px -10px rgba(0, 0, 0, 0.5);
+    /* Bottom shadow - larger */
+}
+
+.Game .homeBall>div {
+    width: 4vw;
+    height: 4vw;
+}
