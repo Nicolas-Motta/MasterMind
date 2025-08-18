@@ -58,17 +58,11 @@ public class ObjectGame implements Serializable {
         return based;
     }
 
-    public Ball[] getLabel() {
-        String statusStr = status.toString();
-        char lastChar = statusStr.charAt(statusStr.length() - 1);
-        if (Character.isDigit(lastChar)) {
-            int idx = Character.getNumericValue(lastChar);
-            if (idx >= 0 && idx < labels.length) {
-                return labels[idx];
-            }
+    public Ball[] getLabel(int n) {
+        if (n >= 0 && n < labels.length) {
+            return labels[n];
         }
-        throw new RuntimeException("Non è possibile richiedere il valore del label quando ci si trova nella fase di "
-                + statusStr);
+        throw new RuntimeException("Label non trovato");
     }
 
     public void setLabel(int n, Ball[] label) {

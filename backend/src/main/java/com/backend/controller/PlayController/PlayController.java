@@ -8,6 +8,8 @@ import com.backend.Enums.Color;
 import com.backend.Enums.Position;
 import com.backend.controller.BallResponse;
 import com.backend.controller.Message;
+import com.backend.controller.LabelRequest;
+import com.backend.controller.LabelResponse;
 
 @RestController
 @RequestMapping("/MasterMind")
@@ -26,5 +28,21 @@ public class PlayController {
         }
         currentHomeBall++;
         return new BallResponse(game.getBased()[currentHomeBall % game.getBased().length]);
+    }
+
+    @PostMapping("/getLabel")
+    public LabelResponse getLabel(@RequestBody LabelRequest request) {
+        try {
+            if (!"getLabel".equals(request.getInstructions())) {
+                return new LabelResponse(LabelResponse.getError());
+            }
+            Ball[] label = game.getLabel(request.getId());
+            return new LabelResponse(label);
+            
+        } catch (RuntimeException e) {
+            return new LabelResponse(LabelResponse.getError());
+        } catch (Exception e) {
+            return new LabelResponse(LabelResponse.getError());
+        }
     }
 }
