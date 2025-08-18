@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Button from "../Button/Button";
 import OptionMenu from "../OptionMenu/OptionMenu";
 import Window from "../Window/Window";
@@ -18,7 +18,7 @@ export default function Game() {
   }
 
   // Funzione per richiedere i dati della pallina dal backend
-  const fetchBallData = async (): Promise<{ id: string; color: ColorType }> => {
+  const fetchBallData = useCallback(async (): Promise<{ id: string; color: ColorType }> => {
     try {
       const requestBody = {
         instraction: "newHomeBall"
@@ -55,7 +55,7 @@ export default function Game() {
         color: "ERROR"
       };
     }
-  };
+  }, []); // Array di dipendenze vuoto perché la funzione non dipende da nessuna prop o state
 
   return (
     <div className="Game">
