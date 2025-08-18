@@ -1,27 +1,33 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Button from "../Button/Button"
 import CareerMenu from "../CareerMenu/CareerMenu"
 import OptionMenu from "../OptionMenu/OptionMenu"
+import { preloadComponents } from "../../utils/preloadUtils"
 import "./Lobby.css"
 
 export default function Lobby() {
     const [careertMenu, setCareertMenu] = useState<React.ReactNode | null>(null);
     const [optionMenu, setOptionMenu] = useState<React.ReactNode | null>(null);
 
-    function toggleCareertMenu(menuComponent: React.ReactNode) {
+    // Preload del componente Game al mount della Lobby
+    useEffect(() => {
+        preloadComponents.preloadGame();
+    }, []);
+
+    function toggleCareertMenu() {
         if (careertMenu) {
             setCareertMenu(null);
         } else {
-            setCareertMenu(menuComponent);
+            setCareertMenu(<CareerMenu />);
             setOptionMenu(null);
         }
     }
 
-    function toggleOptionMenu(menuComponent: React.ReactNode) {
+    function toggleOptionMenu() {
         if (optionMenu) {
             setOptionMenu(null);
         } else {
-            setOptionMenu(menuComponent);
+            setOptionMenu(<OptionMenu />);
             setCareertMenu(null);
         }
     }
@@ -30,10 +36,20 @@ export default function Lobby() {
         <div className="Lobby">
             <h1>MasterMind</h1>
             <div className="buttons">
-                <Button className="careerButton" onClick={() => toggleCareertMenu(<CareerMenu />)}>CAREER</Button>
+                <Button 
+                    className="careerButton" 
+                    onClick={() => toggleCareertMenu()}
+                >
+                    CAREER
+                </Button>
                 <Button className="infinityButton">INFINITY</Button>
                 <Button className='quitButton'>QUIT</Button>
-                <Button className="optionButton" onClick={() => toggleOptionMenu(<OptionMenu />)}>OPTION</Button>
+                <Button 
+                    className="optionButton" 
+                    onClick={() => toggleOptionMenu()}
+                >
+                    OPTION
+                </Button>
             </div>
             {careertMenu}
             {optionMenu}
