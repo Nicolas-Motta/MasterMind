@@ -5,6 +5,7 @@ import './main.css'
 import Lobby from './Components/Lobby/Lobby';
 import Game from './Components/Game/Game';
 import Load from './Components/Load/Load';
+import { PositionProvider } from './contexts/PositionContext';
 
 function GameReRender() {
   const location = useLocation();
@@ -17,9 +18,13 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={<Load/>}/>
-          <Route path="/lobby" element={<Lobby/>}/>
-          <Route path="/game" element={<GameReRender/>}/>
+        <Route path="/" element={<Load />} />
+        <Route path="/lobby" element={<Lobby />} />
+        <Route path="/game" element={
+          <PositionProvider>
+            <GameReRender />
+          </PositionProvider>
+        } />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

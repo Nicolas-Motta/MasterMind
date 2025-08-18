@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { type Color as ColorType } from "../../Types/Color";
+import { usePositionContext } from "../../contexts/PositionContext";
 import "./Ball.css";
 
 export interface BallProps {
@@ -13,8 +14,8 @@ export default function Ball({ getBallInfo }: BallProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [ballInfo, setBallInfo] = useState<{ id: string; color: ColorType }>({ id: "error", color: "ERROR" });
+    const { setBallPosition, updateBallPosition, getBallPosition } = usePositionContext();
 
-    // Esegue la funzione solo al primo render
     useEffect(() => {
         if (getBallInfo) {
             (async () => {
@@ -30,6 +31,26 @@ export default function Ball({ getBallInfo }: BallProps) {
             })();
         }
     }, [getBallInfo]);
+
+    useEffect(() => {
+        if (ballInfo.id !== "error") {
+            // Ottiene la posizione dal context se esiste, altrimenti usa quella locale
+            const contextPosition = getBallPosition(ballInfo.id);
+            
+            if (contextPosition) {
+                // Se esiste nel context, usa quella posizione
+                setPosition({ x: contextPosition.x, y: contextPosition.y });
+            } else {
+                // Se non esiste, crea una nuova entry nel context
+                setBallPosition({
+                    id: ballInfo.id,
+                    x: position.x,
+                    y: position.y,
+                    color: ballInfo.color
+                });
+            }
+        }
+    }, [ballInfo, setBallPosition, getBallPosition]);
 
     const onPointerDown = (e: React.PointerEvent) => {
         const px = e.clientX;
@@ -56,8 +77,11 @@ export default function Ball({ getBallInfo }: BallProps) {
         };
 
         const handlePointerUp = () => {
+            if (ballInfo.id !== "error") {
+                // 🎯 Aggiorna il context con la posizione finale solo al rilascio
+                updateBallPosition(ballInfo.id, position.x, position.y);
+            }
             setIsDragging(false);
-            // Torna alla posizione originale quando rilasciata
             setPosition(originalPosition);
         };
 
