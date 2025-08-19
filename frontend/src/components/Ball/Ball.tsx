@@ -14,7 +14,7 @@ export default function Ball({ getBallInfo }: BallProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [ballInfo, setBallInfo] = useState<{ id: string; color: ColorType }>({ id: "error", color: "ERROR" });
-    const { setBallPosition, updateBallPosition, getBallPosition } = usePositionContext();
+    const { setX, setY, setBall } = usePositionContext();
 
     useEffect(() => {
         if (getBallInfo) {
@@ -31,26 +31,6 @@ export default function Ball({ getBallInfo }: BallProps) {
             })();
         }
     }, [getBallInfo]);
-
-    useEffect(() => {
-        if (ballInfo.id !== "error") {
-            // Ottiene la posizione dal context se esiste, altrimenti usa quella locale
-            const contextPosition = getBallPosition(ballInfo.id);
-            
-            if (contextPosition) {
-                // Se esiste nel context, usa quella posizione
-                setPosition({ x: contextPosition.x, y: contextPosition.y });
-            } else {
-                // Se non esiste, crea una nuova entry nel context
-                setBallPosition({
-                    id: ballInfo.id,
-                    x: position.x,
-                    y: position.y,
-                    color: ballInfo.color
-                });
-            }
-        }
-    }, [ballInfo, setBallPosition, getBallPosition]);
 
     const onPointerDown = (e: React.PointerEvent) => {
         const px = e.clientX;
@@ -77,9 +57,16 @@ export default function Ball({ getBallInfo }: BallProps) {
         };
 
         const handlePointerUp = () => {
-            if (ballInfo.id !== "error") {
-                // 🎯 Aggiorna il context con la posizione finale solo al rilascio
-                updateBallPosition(ballInfo.id, position.x, position.y);
+            if (ballInfo.id !== "error" && ref.current) {
+                // Ottieni le coordinate assolute della pallina dal DOM
+                const rect = ref.current.getBoundingClientRect();
+                
+                setBall({
+                    id: ballInfo.id,
+                    x: rect.left,  // Coordinate assolute del viewport
+                    y: rect.top,   // Coordinate assolute del viewport
+                    color: ballInfo.color
+                });
             }
             setIsDragging(false);
             setPosition(originalPosition);
@@ -94,7 +81,7 @@ export default function Ball({ getBallInfo }: BallProps) {
             document.removeEventListener("pointermove", handlePointerMove);
             document.removeEventListener("pointerup", handlePointerUp);
         };
-    }, [isDragging, dragOffset]);
+    }, [isDragging, dragOffset, setX, setY, position.x, position.y, ballInfo.id]);
 
     // Funzione per convertire l'enum colore in colore CSS
     const getColorStyle = (color: ColorType): string => {

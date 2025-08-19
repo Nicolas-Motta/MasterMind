@@ -1,22 +1,23 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
+import { type Position } from '../Types/Position';
 
-// Tipo per le coordinate di una ball
-export interface BallPosition {
+// Tipo per la ball singola
+export interface Ball {
   id: string;
   x: number;
   y: number;
-  color?: string;
+  color: string;
+  position: Position;
 }
 
 // Tipo per il context
 interface PositionContextType {
-  ballPositions: BallPosition[];
-  setBallPosition: (ballPosition: BallPosition) => void;
-  updateBallPosition: (id: string, x: number, y: number) => void;
-  removeBallPosition: (id: string) => void;
-  getBallPosition: (id: string) => BallPosition | undefined;
-  clearAllPositions: () => void;
+  ball: Ball | null;
+  setX: (x: number) => void;
+  setY: (y: number) => void;
+  setBall: (ball: Ball) => void;
+  clearBall: () => void;
 }
 
 // Creo il context
@@ -29,57 +30,34 @@ interface PositionProviderProps {
 
 // Provider del context
 export const PositionProvider: React.FC<PositionProviderProps> = ({ children }) => {
-  const [ballPositions, setBallPositions] = useState<BallPosition[]>([]);
+  const [ball, setBallState] = useState<Ball | null>(null);
 
-  // Aggiunge o aggiorna la posizione di una ball
-  const setBallPosition = (ballPosition: BallPosition) => {
-    setBallPositions(prev => {
-      const existingIndex = prev.findIndex(ball => ball.id === ballPosition.id);
-      if (existingIndex !== -1) {
-        // Aggiorna ball esistente
-        const updated = [...prev];
-        updated[existingIndex] = ballPosition;
-        return updated;
-      } else {
-        // Aggiunge nuova ball
-        return [...prev, ballPosition];
-      }
-    });
+  // Imposta la coordinata X
+  const setX = (x: number) => {
+    setBallState(prev => prev ? { ...prev, x } : null);
   };
 
-  // Aggiorna solo le coordinate di una ball specifica (chiamato al rilascio)
-  const updateBallPosition = (id: string, x: number, y: number) => {
-    setBallPositions(prev => 
-      prev.map(ball => 
-        ball.id === id 
-          ? { ...ball, x, y }
-          : ball
-      )
-    );
+  // Imposta la coordinata Y
+  const setY = (y: number) => {
+    setBallState(prev => prev ? { ...prev, y } : null);
   };
 
-  // Rimuove una ball dalle posizioni
-  const removeBallPosition = (id: string) => {
-    setBallPositions(prev => prev.filter(ball => ball.id !== id));
+  // Imposta l'intera ball
+  const setBall = (newBall: Ball) => {
+    setBallState(newBall);
   };
 
-  // Ottiene la posizione di una ball specifica
-  const getBallPosition = (id: string): BallPosition | undefined => {
-    return ballPositions.find(ball => ball.id === id);
-  };
-
-  // Pulisce tutte le posizioni
-  const clearAllPositions = () => {
-    setBallPositions([]);
+  // Rimuove la ball
+  const clearBall = () => {
+    setBallState(null);
   };
 
   const contextValue: PositionContextType = {
-    ballPositions,
-    setBallPosition,
-    updateBallPosition,
-    removeBallPosition,
-    getBallPosition,
-    clearAllPositions,
+    ball,
+    setX,
+    setY,
+    setBall,
+    clearBall,
   };
 
   return (
@@ -96,23 +74,4 @@ export const usePositionContext = (): PositionContextType => {
     throw new Error('usePositionContext deve essere usato all\'interno di un PositionProvider');
   }
   return context;
-};
-
-// Hook per ottenere le coordinate di una ball specifica
-export const useBallPosition = (ballId: string) => {
-  const { getBallPosition, updateBallPosition } = usePositionContext();
-  
-  const position = getBallPosition(ballId);
-  
-  // Funzione da chiamare solo al rilascio della pallina
-  const updatePositionOnRelease = (x: number, y: number) => {
-    updateBallPosition(ballId, x, y);
-  };
-
-  return {
-    x: position?.x || 0,
-    y: position?.y || 0,
-    color: position?.color,
-    updatePositionOnRelease,
-  };
 };
