@@ -20,4 +20,46 @@
     
     /* Assicura che la pallina non causi overflow */
     box-sizing: border-box;
+    
+    /* Effetti 3D per rendere la pallina come una sfera tridimensionale */
+    background: radial-gradient(
+        ellipse 30% 40% at 35% 30%,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.6) 20%,
+        rgba(255, 255, 255, 0.2) 40%,
+        transparent 50%
+    ), 
+    radial-gradient(
+        ellipse at center,
+        var(--ball-color, red) 0%,
+        var(--ball-color, red) 70%,
+        color-mix(in srgb, var(--ball-color, red) 70%, black) 100%
+    );
+    
+    /* Ombra esterna per dare profondità */
+    box-shadow: 
+        0 0.3vw 0.6vw rgba(0, 0, 0, 0.4),
+        0 0.1vw 0.2vw rgba(0, 0, 0, 0.3),
+        inset -0.1vw -0.1vw 0.2vw rgba(0, 0, 0, 0.3),
+        inset 0.05vw 0.05vw 0.1vw rgba(255, 255, 255, 0.3);
+}
+
+/* Effetto hover per maggiore interattività */
+.Ball:hover {
+    transform: translateY(-0.1vw) scale(1.02);
+    box-shadow: 
+        0 0.4vw 0.8vw rgba(0, 0, 0, 0.5),
+        0 0.15vw 0.3vw rgba(0, 0, 0, 0.4),
+        inset -0.1vw -0.1vw 0.2vw rgba(0, 0, 0, 0.3),
+        inset 0.05vw 0.05vw 0.1vw rgba(255, 255, 255, 0.4);
+}
+
+/* Effetto attivo quando viene cliccata */
+.Ball:active {
+    transform: translateY(0.05vw) scale(0.98);
+    box-shadow: 
+        0 0.2vw 0.4vw rgba(0, 0, 0, 0.4),
+        0 0.05vw 0.1vw rgba(0, 0, 0, 0.3),
+        inset -0.1vw -0.1vw 0.2vw rgba(0, 0, 0, 0.4),
+        inset 0.05vw 0.05vw 0.1vw rgba(255, 255, 255, 0.2);
 }

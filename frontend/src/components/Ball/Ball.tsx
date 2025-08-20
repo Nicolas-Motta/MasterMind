@@ -60,15 +60,13 @@ export default function Ball({ getBallInfo}: BallProps) {
 
         const handlePointerUp = () => {
             if (ballInfo.id !== "error" && ref.current) {
-                // Ottieni le coordinate assolute della pallina dal DOM
                 const rect = ref.current.getBoundingClientRect();
-                
                 setBall({
                     id: ballInfo.id,
-                    x: rect.left,  // Coordinate assolute del viewport
-                    y: rect.top,   // Coordinate assolute del viewport
+                    x: rect.left,  
+                    y: rect.top,   
                     color: ballInfo.color,
-                    position: ballInfo.position // Include the position prop
+                    position: ballInfo.position 
                 });
             }
             setIsDragging(false);
@@ -89,22 +87,22 @@ export default function Ball({ getBallInfo}: BallProps) {
     // Funzione per convertire l'enum colore in colore CSS
     const getColorStyle = (color: ColorType): string => {
         const colorMap: Record<ColorType, string> = {
-            "RED": "#FF0000",
-            "BLUE": "#0000FF", 
-            "GREEN": "#00FF00",
-            "YELLOW": "#FFFF00",
-            "ORANGE": "#FFA500",
-            "PURPLE": "#800080",
-            "ERROR": "#808080" // Colore di errore
+            "RED": "#FF4444",    
+            "BLUE": "#4488FF",     
+            "GREEN": "#44FF44",    
+            "YELLOW": "#FFD700",   
+            "ORANGE": "#FF6600",   
+            "PURPLE": "#BB44FF",   
+            "ERROR": "#888888"     
         };
-        return colorMap[color] || "#808080";
+        return colorMap[color] || "#888888";
     };
 
     const ballStyle = {
         transform: `translate(${coordinates.x}px, ${coordinates.y}px)`,
         cursor: isDragging ? 'grabbing' : 'grab',
-        backgroundColor: getColorStyle(ballInfo.color)
-    };
+        '--ball-color': getColorStyle(ballInfo.color)
+    } as React.CSSProperties & { '--ball-color': string };
 
     return (
         <div 
