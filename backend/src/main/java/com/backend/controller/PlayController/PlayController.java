@@ -19,15 +19,29 @@ public class PlayController {
     @Autowired
     private ObjectGame game;
     
-    private int currentHomeBall = 0;
+    private int currentHomeBallIndex = 0;
+
+    public void resetHomeBallIndex() {
+        this.currentHomeBallIndex = 0;
+    }
 
     @PostMapping("/newHomeBall")
     public BallResponse newHomeBall(@RequestBody Message message) {
         if (!"newHomeBall".equals(message.getInstraction())) {
-            return new BallResponse(new Ball("error", Color.ERROR, Position.HOME));
+            return new BallResponse(new Ball("error", Color.ERROR, Position.ERROR));
         }
-        currentHomeBall++;
-        return new BallResponse(game.getBased()[currentHomeBall % game.getBased().length]);
+        
+        // Assicuriamoci che il gioco sia inizializzato
+        if (game.getBased() == null) {
+            game.newGame();
+            currentHomeBallIndex = 0;
+        }
+        
+        Ball[] availableBalls = game.getBased();
+        Ball selectedBall = availableBalls[currentHomeBallIndex];
+        
+        currentHomeBallIndex = (currentHomeBallIndex + 1) % availableBalls.length;
+        return new BallResponse(new Ball(selectedBall.getId(), selectedBall.getColor(), selectedBall.getPosition()));
     }
 
     @PostMapping("/getLabel")

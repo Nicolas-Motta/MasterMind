@@ -1,19 +1,20 @@
 import { useRef, useState, useEffect } from "react";
 import { type Color as ColorType } from "../../Types/Color";
+import { type Position } from "../../Types/Position";
 import { usePositionContext } from "../../contexts/PositionContext";
 import "./Ball.css";
 
 export interface BallProps {
-    getBallInfo?: () => Promise<{ id: string; color: ColorType }> | { id: string; color: ColorType };
+    getBallInfo: () => Promise<{ id: string; color: ColorType; position: Position }>;
 }
 
-export default function Ball({ getBallInfo }: BallProps) {
+export default function Ball({ getBallInfo}: BallProps) {
     const ref = useRef<HTMLDivElement>(null);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
     const [originalPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-    const [ballInfo, setBallInfo] = useState<{ id: string; color: ColorType }>({ id: "error", color: "ERROR" });
+    const [ballInfo, setBallInfo] = useState<{ id: string; color: ColorType; position: Position }>({ id: "error", color: "ERROR", position: "ERROR" });
     const { setX, setY, setBall } = usePositionContext();
 
     useEffect(() => {
@@ -25,7 +26,8 @@ export default function Ball({ getBallInfo }: BallProps) {
                 } catch (error) {
                     setBallInfo({
                         id: "error",
-                        color: "ERROR"
+                        color: "ERROR",
+                        position: "ERROR"
                     });
                 }
             })();
@@ -37,8 +39,8 @@ export default function Ball({ getBallInfo }: BallProps) {
         const py = e.clientY;
         
         // Calcola l'offset dal punto di click alla posizione attuale della pallina
-        const ox = px - position.x;
-        const oy = py - position.y;
+        const ox = px - coordinates.x;
+        const oy = py - coordinates.y;
         
         setDragOffset({ x: ox, y: oy });
         setIsDragging(true);
@@ -53,7 +55,7 @@ export default function Ball({ getBallInfo }: BallProps) {
             const newX = e.clientX - dragOffset.x;
             const newY = e.clientY - dragOffset.y;
             
-            setPosition({ x: newX, y: newY });
+            setCoordinates({ x: newX, y: newY });
         };
 
         const handlePointerUp = () => {
@@ -65,11 +67,12 @@ export default function Ball({ getBallInfo }: BallProps) {
                     id: ballInfo.id,
                     x: rect.left,  // Coordinate assolute del viewport
                     y: rect.top,   // Coordinate assolute del viewport
-                    color: ballInfo.color
+                    color: ballInfo.color,
+                    position: ballInfo.position // Include the position prop
                 });
             }
             setIsDragging(false);
-            setPosition(originalPosition);
+            setCoordinates(originalPosition);
         };
 
         if (isDragging) {
@@ -81,7 +84,7 @@ export default function Ball({ getBallInfo }: BallProps) {
             document.removeEventListener("pointermove", handlePointerMove);
             document.removeEventListener("pointerup", handlePointerUp);
         };
-    }, [isDragging, dragOffset, setX, setY, position.x, position.y, ballInfo.id]);
+    }, [isDragging, dragOffset, setX, setY, coordinates.x, coordinates.y, ballInfo.id]);
 
     // Funzione per convertire l'enum colore in colore CSS
     const getColorStyle = (color: ColorType): string => {
@@ -98,7 +101,7 @@ export default function Ball({ getBallInfo }: BallProps) {
     };
 
     const ballStyle = {
-        transform: `translate(${position.x}px, ${position.y}px)`,
+        transform: `translate(${coordinates.x}px, ${coordinates.y}px)`,
         cursor: isDragging ? 'grabbing' : 'grab',
         backgroundColor: getColorStyle(ballInfo.color)
     };
