@@ -50,3 +50,14 @@
     width: 4vw;
     height: 4vw;
 }
+
+.Game .board {
+    position: absolute;
+    left: 48%;
+
+    height: 100vh;
+
+    background-color: #23232b;
+    display: grid;
+    grid-template-rows: repeat(6, 1fr) 2fr;
+}
