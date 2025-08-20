@@ -12,6 +12,7 @@ public class ObjectGame implements Serializable {
     private Ball[][] labels;
     private Ball[] result;
     private Status status;
+    private Position currentLabel;
 
     public ObjectGame() {
         this.status = Status.LOBBY;
@@ -36,6 +37,7 @@ public class ObjectGame implements Serializable {
                 new Ball(getRandomColor(), Position.RESULT),
                 new Ball(getRandomColor(), Position.RESULT),
         };
+        currentLabel = Position.LABEL0;
         status = Status.GENERATING;
 
     }
@@ -66,10 +68,21 @@ public class ObjectGame implements Serializable {
     }
 
     public void setLabel(int n, Ball[] label) {
+        if (status == Status.GENERATING) {
+            status = Status.PLAYING;
+        }
         this.labels[n] = label;
     }
 
     public Ball[] getResult() {
         return result;
+    }
+
+    public Position getCurrentLabel() {
+        return currentLabel;
+    }
+
+    public void setCurrentLabel(Position currentLabel) {
+        this.currentLabel = currentLabel;
     }
 }

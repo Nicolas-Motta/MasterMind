@@ -1,11 +1,20 @@
 package com.backend;
 
 import com.backend.Enums.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class Ball {
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("color")
     private Color color;
+    @JsonProperty("position")
     private Position position;
+
+    // Default constructor for Jackson
+    public Ball() {
+    }
 
     public Ball(Color color, Position position) {
         this.id =
@@ -72,5 +81,13 @@ public class Ball {
 
     public void setPosition(Position position) {
         this.position = position;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }
