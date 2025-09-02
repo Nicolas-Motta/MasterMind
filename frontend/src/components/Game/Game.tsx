@@ -84,7 +84,7 @@ export default function Game() {
 
       <div className="board">
         {Array.from({ length: 6 }, (_, i) => (
-          <Label id={`LABEL${i}` as Position}></Label>
+          <Label key={i} id={`LABEL${i}` as Position}></Label>
         ))}
       </div>
 

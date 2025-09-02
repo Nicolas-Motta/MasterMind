@@ -22,6 +22,7 @@ interface LabelResponse {
 
 export interface LabelProps {
     id: Position;
+
 }
 
 export default function Label({ id }: LabelProps) {
