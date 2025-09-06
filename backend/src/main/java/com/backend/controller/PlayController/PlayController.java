@@ -2,8 +2,7 @@ package com.backend.controller.PlayController;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import com.backend.ObjectGame;
 import com.backend.Ball;
 import com.backend.Enums.Color;
@@ -14,6 +13,8 @@ import com.backend.controller.LabelRequest;
 import com.backend.controller.LabelResponse;
 import com.backend.controller.SetLabelRequest;
 import com.backend.controller.SetLabelResponse;
+import com.backend.controller.CheckRequest;
+import com.backend.controller.CheckGameResponse;
 
 @RestController
 @RequestMapping("/MasterMind")
@@ -92,4 +93,62 @@ public class PlayController {
             default: throw new RuntimeException("Invalid label position: " + position);
         }
     }
+
+    @PostMapping("/sendResponse")
+    public CheckGameResponse sendResponse(@RequestBody CheckRequest request) {
+        try {
+            if (!"sendResponse".equals(request.getInstruction())) {
+                return CheckGameResponse.getError();
+            }
+            
+            // Ottieni la composizione fornita dall'utente
+            Ball[] userComposition = request.getComposition();
+            
+            // Controllo che l'array sia di 4 elementi
+            if (userComposition == null || userComposition.length != 4) {
+                return CheckGameResponse.getError("Array non completo");
+            }
+            
+            // Ottieni la risposta corretta dal gioco
+            Ball[] correctComposition = game.getResult();
+            
+            int redPins = 0;
+            int whitePins = 0;
+
+            // Array per tracciare quali posizioni sono già state controllate
+            boolean[] userUsed = new boolean[userComposition.length];
+            boolean[] correctUsed = new boolean[correctComposition.length];
+
+            // palline rosse
+            for (int i = 0; i < userComposition.length; i++) {
+                if (userComposition[i].getColor() == correctComposition[i].getColor()) {
+                    redPins++;
+                    userUsed[i] = true;
+                    correctUsed[i] = true;
+                }
+            }
+
+            // palline bianche
+            for (int i = 0; i < userComposition.length; i++) {
+                if (!userUsed[i]) { // Se questa posizione non è già stata usata per un pallino rosso
+                    for (int j = 0; j < correctComposition.length; j++) {
+                        if (!correctUsed[j] && userComposition[i].getColor() == correctComposition[j].getColor()) {
+                            whitePins++;
+                            correctUsed[j] = true;
+                            break; // Esce dal loop interno per evitare conteggi multipli
+                        }
+                    }
+                }
+            }
+            
+            return new CheckGameResponse(redPins, whitePins);
+            
+        } catch (RuntimeException e) {
+            return CheckGameResponse.getError();
+        } catch (Exception e) {
+            return CheckGameResponse.getError();
+        }
+    }
+
+    
 }
