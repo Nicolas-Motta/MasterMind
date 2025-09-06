@@ -106,7 +106,7 @@ export default function Ball({ getBallInfo}: BallProps) {
 
     return (
         <div 
-            className="Ball"
+            className={`Ball ${isDragging ? 'dragging' : ''}`}
             id={ballInfo?.id}
             ref={ref} 
             style={ballStyle} 

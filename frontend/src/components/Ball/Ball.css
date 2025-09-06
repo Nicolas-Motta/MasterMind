@@ -63,3 +63,16 @@
         inset -0.1vw -0.1vw 0.2vw rgba(0, 0, 0, 0.4),
         inset 0.05vw 0.05vw 0.1vw rgba(255, 255, 255, 0.2);
 }
+
+/* Classe specifica per quando la pallina è in stato di dragging */
+.Ball.dragging {
+    z-index: 9999 !important;
+    pointer-events: none; /* Evita interferenze durante il drag */
+    transform-origin: center;
+    transition: none; /* Rimuove transizioni durante il drag */
+}
+
+/* Assicura che la pallina trascinata sia sempre sopra tutto */
+.Ball.dragging {
+    position: fixed !important;
+}
