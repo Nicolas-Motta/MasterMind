@@ -4,6 +4,7 @@ import { usePositionContext } from "../../contexts/PositionContext";
 import { type Position } from "../../Types/Position";
 import { type Color as ColorType } from "../../Types/Color";
 import "./Label.css"
+import Button from "../Button/Button";
 
 interface LabelRequest {
     instructions: string;
@@ -20,6 +21,11 @@ interface LabelResponse {
     label: BallData[];
 }
 
+interface CheckResponse {
+    redPins: number;
+    whitePins: number;
+}
+
 export interface LabelProps {
     id: Position;
 
@@ -27,6 +33,7 @@ export interface LabelProps {
 
 export default function Label({ id }: LabelProps) {
     const [composition, setComposition] = useState<(BallData | null)[] | null>(null);
+    const [checkResult, setCheckResult] = useState<CheckResponse | null>(null);
     const { ball } = usePositionContext();
     const labelRef = useRef<HTMLDivElement>(null);  
 
@@ -51,36 +58,32 @@ export default function Label({ id }: LabelProps) {
             if (overlapPercentage >= 50) {
                 if (!composition) return;
 
-                // Confronta ID della pallina mossa con tutti gli ID delle palline già registrate nella composition
-                const isAlreadyRegistered = composition.some(registeredBall => 
+                // Controlla se la pallina trascinata è già in una posizione nella composition
+                const existingBallIndex = composition.findIndex(registeredBall => 
                     registeredBall && registeredBall.id === ball.id
                 );
                 
-                if (isAlreadyRegistered) {
-                    // Rimuove la vecchia posizione della pallina
-                    const updatedBalls = composition.filter(registeredBall => 
-                        registeredBall && registeredBall.id !== ball.id
-                    );
-                    
-                    const newComposition = [...updatedBalls];
-                    newComposition[index] = {
-                        id: ball.id,
-                        color: ball.color as ColorType,
-                        position: id
-                    };
-
-                    pushLabel(newComposition);
-                    
-                } else {
-                    const newComposition = [...composition];
-                    newComposition[index] = {
-                        id: ball.id,
-                        color: ball.color as ColorType,
-                        position: id
-                    };
-                    
-                    pushLabel(newComposition);
+                // Crea una nuova composizione
+                const newComposition = [...composition];
+                
+                // Se la pallina è già registrata in un'altra posizione, rimuovila da quella posizione
+                if (existingBallIndex !== -1) {
+                    newComposition[existingBallIndex] = null;
                 }
+                
+                // Genera un nuovo ID univoco per permettere multiple palline dello stesso colore
+                // Manteniamo il formato originale ma aggiungiamo un timestamp per unicità
+                const timestamp = Date.now().toString().slice(-4); // Ultimi 4 cifre del timestamp
+                const newBallId = ball.id.replace(/\d+$/, '') + timestamp;
+                
+                // Posiziona la pallina nella nuova posizione
+                newComposition[index] = {
+                    id: newBallId,
+                    color: ball.color as ColorType,
+                    position: id
+                };
+
+                pushLabel(newComposition);
             }
         });
     }, [ball]);
@@ -101,7 +104,7 @@ export default function Label({ id }: LabelProps) {
     };
 
     // Funzione per inviare l'array aggiornato al backend
-    const pushLabel= async (newComposition: (BallData | null)[]) => {
+    const pushLabel = async (newComposition: (BallData | null)[]) => {
         try {    
             const processedComposition = newComposition.map(ball => {
                 if (ball === null) return null;
@@ -137,6 +140,37 @@ export default function Label({ id }: LabelProps) {
         }
     };
 
+    const sendResponse = async () => {
+        try {
+            const requestBody = {
+                instruction: "sendResponse",
+                id: id,
+                composition: composition
+            };
+
+            const response = await fetch('http://localhost:8080/MasterMind/sendResponse', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data: CheckResponse = await response.json();
+            
+            // Aggiorna lo stato con la risposta del controllo
+            setCheckResult(data);
+
+        } catch (error) {
+            console.error(`Errore nell'invio della risposta:`, error);
+            // In caso di errore, resetta il risultato
+            setCheckResult(null);
+        }
+    };
 
     useEffect(() => {
         const fetchLabel = async (id: Position) => {
@@ -192,6 +226,21 @@ export default function Label({ id }: LabelProps) {
                     ) : null}
                 </div>
             ))}
+            <div className="responseZone">
+                {checkResult && (
+                    <>
+                        {/* Genera i pin rossi */}
+                        {Array.from({ length: checkResult.redPins }, (_, index) => (
+                            <div key={`red-${index}`} className="pin red"></div>
+                        ))}
+                        {/* Genera i pin bianchi */}
+                        {Array.from({ length: checkResult.whitePins }, (_, index) => (
+                            <div key={`white-${index}`} className="pin white"></div>
+                        ))}
+                    </>
+                )}
+            </div>
+            <Button onClick={() => sendResponse()}>Send</Button>
         </div>
     )
 }
