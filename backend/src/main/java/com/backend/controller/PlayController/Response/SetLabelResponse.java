@@ -1,4 +1,4 @@
-package com.backend.controller;
+package com.backend.controller.PlayController.Response;
 
 import com.backend.Ball;
 import com.backend.Enums.Color;

@@ -7,14 +7,14 @@ import com.backend.ObjectGame;
 import com.backend.Ball;
 import com.backend.Enums.Color;
 import com.backend.Enums.Position;
-import com.backend.controller.BallResponse;
 import com.backend.controller.Message;
-import com.backend.controller.LabelRequest;
-import com.backend.controller.LabelResponse;
-import com.backend.controller.SetLabelRequest;
-import com.backend.controller.SetLabelResponse;
-import com.backend.controller.CheckRequest;
-import com.backend.controller.CheckGameResponse;
+import com.backend.controller.PlayController.Request.CheckRequest;
+import com.backend.controller.PlayController.Request.LabelRequest;
+import com.backend.controller.PlayController.Request.SetLabelRequest;
+import com.backend.controller.PlayController.Response.BallResponse;
+import com.backend.controller.PlayController.Response.CheckGameResponse;
+import com.backend.controller.PlayController.Response.LabelResponse;
+import com.backend.controller.PlayController.Response.SetLabelResponse;
 
 @RestController
 @RequestMapping("/MasterMind")

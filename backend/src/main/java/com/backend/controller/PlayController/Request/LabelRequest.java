@@ -1,4 +1,4 @@
-package com.backend.controller;
+package com.backend.controller.PlayController.Request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.backend.Enums.Position;

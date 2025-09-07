@@ -1,4 +1,4 @@
-package com.backend.controller;
+package com.backend.controller.SystemController.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
