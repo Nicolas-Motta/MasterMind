@@ -15,6 +15,21 @@ public class ObjectGame implements Serializable {
     private Ball[] result;
     private Status status;
     private Position currentLabel;
+    private boolean isWin;
+
+    public boolean getIsWin() {
+        return isWin;
+    }
+
+    public void setIsWin(boolean isWin) {
+        boolean oldIsWin = this.isWin;
+        this.isWin = isWin;
+        
+        // Notifica il cambiamento solo se il nuovo valore è diverso dal precedente
+        if (variableWatcher != null && isWin != oldIsWin) {
+            variableWatcher.notifyIsWin(isWin);
+        }
+    }
     
     @Autowired
     private VariableWatcher variableWatcher;
@@ -25,6 +40,7 @@ public class ObjectGame implements Serializable {
 
     public void newGame() {
         setStatus(Status.GENERATING);
+        setIsWin(false);
         based = new Ball[] {
                 new Ball(Color.RED, Position.HOME),
                 new Ball(Color.BLUE, Position.HOME),

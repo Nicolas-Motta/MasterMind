@@ -7,6 +7,7 @@ import com.backend.ObjectGame;
 import com.backend.Ball;
 import com.backend.Enums.Color;
 import com.backend.Enums.Position;
+import com.backend.Enums.Status;
 import com.backend.controller.Message;
 import com.backend.controller.PlayController.Request.CheckRequest;
 import com.backend.controller.PlayController.Request.LabelRequest;
@@ -149,7 +150,12 @@ public class PlayController {
                 Position nextLabel = game.getNextLabel(currentLabel);
                 if (nextLabel != null) {
                     game.setCurrentLabel(nextLabel);
+                } else {
+                    game.setStatus(Status.FINISHED);
                 }
+            } else {
+                game.setStatus(Status.FINISHED);
+                game.setIsWin(true);
             }
 
             return new CheckGameResponse(redPins, whitePins);

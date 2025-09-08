@@ -64,6 +64,10 @@ public class VariableWatcher {
         notifyChange("currentLabel", newValue, "ObjectGame");
     }
     
+    public void notifyIsWin(Object newValue) {
+        notifyChange("isWin", newValue, "ObjectGame");
+    }
+    
     public void notifyPlayerScore(Object newScore) {
         notifyChange("playerScore", newScore, "GameLogic");
     }
