@@ -302,7 +302,7 @@ public class Game implements Serializable {
 
         setStatus(Status.PLAYING);
         setCurrentLabel(Position.LABEL0);
-        saveGameState("game_save.dat");
+        saveGameState("game.dat");
 
     }
 
