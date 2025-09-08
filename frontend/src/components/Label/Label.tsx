@@ -19,7 +19,7 @@ interface BallData {
 }
 
 interface LabelResponse {
-    label: BallData[];
+    Label: BallData[];
 }
 
 interface CheckResponse {
@@ -130,7 +130,7 @@ export default function Label({ id }: LabelProps) {
                 composition: processedComposition
             };
 
-            const response = await fetch('http://localhost:8080/MasterMind/setLabel', {
+            const response = await fetch('/MasterMind/setLabel', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export default function Label({ id }: LabelProps) {
                 composition: composition
             };
 
-            const response = await fetch('http://localhost:8080/MasterMind/sendResponse', {
+            const response = await fetch('/MasterMind/sendResponse', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -196,7 +196,7 @@ export default function Label({ id }: LabelProps) {
             };
 
             try {
-                const response = await fetch('http://localhost:8080/MasterMind/getLabel', {
+                const response = await fetch('/MasterMind/getLabel', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -210,10 +210,18 @@ export default function Label({ id }: LabelProps) {
 
                 const data: LabelResponse = await response.json();
 
-                const labelData = data.label && data.label.length > 0
-                    ? data.label
-                    : Array.from({ length: 4 }, () => null);
+                // Assicuriamoci che la risposta sia sempre un array di 4 elementi
+                let labelData: (BallData | null)[];
 
+                if (data.Label && Array.isArray(data.Label)) {
+                    // Se abbiamo dei dati, creiamo un array di 4 elementi
+                    labelData = Array.from({ length: 4 }, (_, index) => 
+                        data.Label[index] || null
+                    );
+                } else {
+                    // Se non abbiamo dati, creiamo un array vuoto di 4 elementi
+                    labelData = Array.from({ length: 4 }, () => null);
+                }
                 setComposition(labelData);
 
             } catch (err) {
@@ -223,7 +231,7 @@ export default function Label({ id }: LabelProps) {
             }
         };
         fetchLabel(id);
-    }, []);
+    }, [id]);
 
 
     return (
