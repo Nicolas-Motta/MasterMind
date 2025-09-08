@@ -2,9 +2,11 @@ package com.backend;
 
 import java.io.Serializable;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Random;
 
 import com.backend.Enums.*;
+import com.backend.util.VariableWatcher;
 
 @Component
 public class ObjectGame implements Serializable {
@@ -13,12 +15,16 @@ public class ObjectGame implements Serializable {
     private Ball[] result;
     private Status status;
     private Position currentLabel;
+    
+    @Autowired
+    private VariableWatcher variableWatcher;
 
     public ObjectGame() {
         this.status = Status.LOBBY;
     }
 
     public void newGame() {
+        setStatus(Status.GENERATING);
         based = new Ball[] {
                 new Ball(Color.RED, Position.HOME),
                 new Ball(Color.BLUE, Position.HOME),
@@ -37,9 +43,8 @@ public class ObjectGame implements Serializable {
                 new Ball(getRandomColor(), Position.RESULT),
                 new Ball(getRandomColor(), Position.RESULT),
         };
-        currentLabel = Position.LABEL0;
-        status = Status.GENERATING;
-
+        setStatus(Status.PLAYING);
+        setCurrentLabel(Position.LABEL0);
     }
 
     public Color getRandomColor() {
@@ -67,6 +72,18 @@ public class ObjectGame implements Serializable {
         throw new RuntimeException("Label non trovato");
     }
 
+    public Position getNextLabel(Position currentLabel) {
+        switch (currentLabel) {
+            case LABEL0: return Position.LABEL1;
+            case LABEL1: return Position.LABEL2;
+            case LABEL2: return Position.LABEL3;
+            case LABEL3: return Position.LABEL4;
+            case LABEL4: return Position.LABEL5;
+            case LABEL5: return null; // Gioco finito
+            default: return Position.LABEL0;
+        }
+    }
+
     public void setLabel(int n, Ball[] label) {
         if (status == Status.GENERATING) {
             status = Status.PLAYING;
@@ -83,6 +100,12 @@ public class ObjectGame implements Serializable {
     }
 
     public void setCurrentLabel(Position currentLabel) {
+        Position oldCurrentLabel = this.currentLabel;
         this.currentLabel = currentLabel;
+        
+        // Notifica il cambiamento solo se la nuova posizione è diversa dalla precedente
+        if (variableWatcher != null && !currentLabel.equals(oldCurrentLabel)) {
+            variableWatcher.notifyCurrentLabel(currentLabel);
+        }
     }
 }

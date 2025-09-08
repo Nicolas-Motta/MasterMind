@@ -94,6 +94,8 @@ public class PlayController {
         }
     }
 
+
+
     @PostMapping("/sendResponse")
     public CheckGameResponse sendResponse(@RequestBody CheckRequest request) {
         try {
@@ -141,8 +143,16 @@ public class PlayController {
                 }
             }
             
+            if (redPins != 4) {
+                Position currentLabel = game.getCurrentLabel();
+                Position nextLabel = game.getNextLabel(currentLabel);
+                if (nextLabel != null) {
+                    game.setCurrentLabel(nextLabel);
+                }
+            }
+
             return new CheckGameResponse(redPins, whitePins);
-            
+
         } catch (RuntimeException e) {
             return CheckGameResponse.getError();
         } catch (Exception e) {

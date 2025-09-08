@@ -2,7 +2,6 @@ package com.backend;
 
 import com.backend.Enums.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class Ball {
     @JsonProperty("id")
