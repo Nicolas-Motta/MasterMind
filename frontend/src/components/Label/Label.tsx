@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Ball from "../Ball/Ball";
 import { usePositionContext } from "../../contexts/PositionContext";
+import { useWebSocket } from "../../contexts/TransfertContext";
 import { type Position } from "../../Types/Position";
 import { type Color as ColorType } from "../../Types/Color";
 import "./Label.css"
@@ -34,19 +35,28 @@ export interface LabelProps {
 export default function Label({ id }: LabelProps) {
     const [composition, setComposition] = useState<(BallData | null)[] | null>(null);
     const [checkResult, setCheckResult] = useState<CheckResponse | null>(null);
+    const { currentLabel } = useWebSocket();
     const { ball } = usePositionContext();
-    const labelRef = useRef<HTMLDivElement>(null);  
+    const labelRef = useRef<HTMLDivElement>(null);
 
-
+    // Funzione helper per verificare se questo label è attivo
+    const isCurrentLabel = () => {
+        return currentLabel === id;
+    };
+    
     useEffect(() => {
         if (!ball || !labelRef.current) return;
+
+        if (!isCurrentLabel()) {
+            return;
+        }
 
         const ballSize = window.innerWidth * 0.04; // 4vw in pixel
         const dropZones = labelRef.current.querySelectorAll('.dropZone');
 
         dropZones.forEach((dropZone, index) => {
             const rect = dropZone.getBoundingClientRect();
-            
+
             const overlapArea = calculateOverlapArea(
                 ball.x, ball.y, ballSize,
                 rect.left, rect.top, ballSize
@@ -59,23 +69,23 @@ export default function Label({ id }: LabelProps) {
                 if (!composition) return;
 
                 // Controlla se la pallina trascinata è già in una posizione nella composition
-                const existingBallIndex = composition.findIndex(registeredBall => 
+                const existingBallIndex = composition.findIndex(registeredBall =>
                     registeredBall && registeredBall.id === ball.id
                 );
-                
+
                 // Crea una nuova composizione
                 const newComposition = [...composition];
-                
+
                 // Se la pallina è già registrata in un'altra posizione, rimuovila da quella posizione
                 if (existingBallIndex !== -1) {
                     newComposition[existingBallIndex] = null;
                 }
-                
+
                 // Genera un nuovo ID univoco per permettere multiple palline dello stesso colore
                 // Manteniamo il formato originale ma aggiungiamo un timestamp per unicità
                 const timestamp = Date.now().toString().slice(-4); // Ultimi 4 cifre del timestamp
                 const newBallId = ball.id.replace(/\d+$/, '') + timestamp;
-                
+
                 // Posiziona la pallina nella nuova posizione
                 newComposition[index] = {
                     id: newBallId,
@@ -105,7 +115,7 @@ export default function Label({ id }: LabelProps) {
 
     // Funzione per inviare l'array aggiornato al backend
     const pushLabel = async (newComposition: (BallData | null)[]) => {
-        try {    
+        try {
             const processedComposition = newComposition.map(ball => {
                 if (ball === null) return null;
                 return {
@@ -141,6 +151,11 @@ export default function Label({ id }: LabelProps) {
     };
 
     const sendResponse = async () => {
+
+        if (!isCurrentLabel()) {
+            return;
+        }
+
         try {
             const requestBody = {
                 instruction: "sendResponse",
@@ -161,7 +176,7 @@ export default function Label({ id }: LabelProps) {
             }
 
             const data: CheckResponse = await response.json();
-            
+
             // Aggiorna lo stato con la risposta del controllo
             setCheckResult(data);
 
@@ -194,11 +209,11 @@ export default function Label({ id }: LabelProps) {
                 }
 
                 const data: LabelResponse = await response.json();
-                
-                const labelData = data.label && data.label.length > 0 
-                    ? data.label 
+
+                const labelData = data.label && data.label.length > 0
+                    ? data.label
                     : Array.from({ length: 4 }, () => null);
-                
+
                 setComposition(labelData);
 
             } catch (err) {

@@ -4,13 +4,16 @@ import "./Load.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImage from "../../assets/Images/logo.png";
+import { useWebSocket } from "../../contexts/TransfertContext"; 
 
 export default function Load() {
     const navigate = useNavigate();
+    const { isConnected } = useWebSocket();
 
     useEffect(() => {
         let active = true;
         let timeoutId: NodeJS.Timeout | null = null;
+        
         const ping = async () => {
             if (!active) return;
             try {
@@ -24,9 +27,13 @@ export default function Load() {
                 if (!response.ok) throw new Error("No response");
                 const data = await response.json();
                 if (data.checkResponse === "pong") {
-                    active = false;
-                    navigate("/lobby");
-                    return;
+                    if (isConnected) {
+                        active = false;
+                        navigate("/lobby");
+                        return;
+                    } else {
+                        console.log("WebSocket connection failed, retrying...");
+                    }
                 }
             } catch (e) {
                 // errore o risposta non valida
@@ -38,7 +45,7 @@ export default function Load() {
             active = false;
             if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [navigate]);
+    }, [navigate, isConnected]);
 
     return (
         <div className="Load">

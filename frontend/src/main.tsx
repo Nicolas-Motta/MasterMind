@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import './main.css'
 import { PositionProvider } from './contexts/PositionContext';
+import { WebSocketProvider } from './contexts/TransfertContext';
 
 // Lazy loading dei componenti per ottimizzare il bundle iniziale
 const Lobby = lazy(() => import('./Components/Lobby/Lobby'));
@@ -20,15 +21,17 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Suspense>
-        <Routes>
-          <Route path="/" element={<Load />} />
-          <Route path="/lobby" element={<Lobby />} />
-          <Route path="/game" element={
-            <PositionProvider>
-              <GameReRender />
-            </PositionProvider>
-          } />
-        </Routes>
+        <WebSocketProvider>
+          <Routes>
+            <Route path="/" element={<Load />} />
+            <Route path="/lobby" element={<Lobby />} />
+            <Route path="/game" element={
+              <PositionProvider>
+                <GameReRender />
+              </PositionProvider>
+            } />
+          </Routes>
+        </WebSocketProvider>
       </Suspense>
     </BrowserRouter>
   </StrictMode>,
