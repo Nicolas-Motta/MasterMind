@@ -3,21 +3,17 @@ package com.backend.controller.PlayController;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.backend.Enums.Color;
 import com.backend.Enums.Position;
 import com.backend.Enums.Status;
 import com.backend.Object.Ball;
 import com.backend.Object.Game;
-import com.backend.controller.Message;
-import com.backend.controller.PlayController.Request.CheckRequest;
-import com.backend.controller.PlayController.Request.LabelRequest;
-import com.backend.controller.PlayController.Request.SetLabelRequest;
-import com.backend.controller.PlayController.Response.BallResponse;
-import com.backend.controller.PlayController.Response.CheckGameResponse;
-import com.backend.controller.PlayController.Response.LabelResponse;
-import com.backend.controller.PlayController.Response.ResultResponse;
-import com.backend.controller.PlayController.Response.SetLabelResponse;
+import com.backend.controller.PlayController.Request.PlayRequest;
+import com.backend.controller.PlayController.Response.PlayResponse;
 
+/**
+ * Controller principale per la gestione del gioco MasterMind.
+ * Gestisce tutte le operazioni di gioco attraverso endpoint REST.
+ */
 @RestController
 @RequestMapping("/MasterMind")
 @CrossOrigin(origins = "*")
@@ -28,62 +24,20 @@ public class PlayController {
     
     private int currentHomeBallIndex = 0;
 
+    /**
+     * Resetta l'indice della pallina corrente.
+     */
     public void resetHomeBallIndex() {
         this.currentHomeBallIndex = 0;
     }
 
-    @PostMapping("/newHomeBall")
-    public BallResponse newHomeBall(@RequestBody Message message) {
-        if (!"newHomeBall".equals(message.getInstraction())) {
-            return new BallResponse(new Ball("error", Color.ERROR, Position.ERROR));
-        }
-        
-        Ball[] availableBalls = game.getBased();
-        Ball selectedBall = availableBalls[currentHomeBallIndex];
-        
-        currentHomeBallIndex = (currentHomeBallIndex + 1) % availableBalls.length;
-        return new BallResponse(new Ball(selectedBall.getId(), selectedBall.getColor(), selectedBall.getPosition()));
-    }
-
-    @PostMapping("/getLabel")
-    public LabelResponse getLabel(@RequestBody LabelRequest request) {
-        try {
-            if (!"getLabel".equals(request.getInstructions())) {
-                return new LabelResponse(LabelResponse.getError());
-            }
-            
-            // Converti Position enum in integer per il metodo getLabel
-            int labelIndex = convertPositionToIndex(request.getId());
-            Ball[] label = game.getLabel(labelIndex);
-            return new LabelResponse(label);
-            
-        } catch (RuntimeException e) {
-            return new LabelResponse(LabelResponse.getError());
-        } catch (Exception e) {
-            return new LabelResponse(LabelResponse.getError());
-        }
-    }
-
-    @PostMapping("/setLabel")
-    public SetLabelResponse setLabel(@RequestBody SetLabelRequest request) {
-        try {
-            if (!"setLabel".equals(request.getInstructions())) {
-                return new SetLabelResponse(SetLabelResponse.getError());
-            }
-            
-            int labelIndex = convertPositionToIndex(request.getId());
-            
-            game.setLabel(labelIndex, request.getComposition());
-            Ball[] updatedLabel = game.getLabel(labelIndex);
-            return new SetLabelResponse(updatedLabel);
-            
-        } catch (RuntimeException e) {
-            return new SetLabelResponse(SetLabelResponse.getError());
-        } catch (Exception e) {
-            return new SetLabelResponse(SetLabelResponse.getError());
-        }
-    }
-
+    /**
+     * Converte una posizione enum in un indice numerico.
+     * 
+     * @param position La posizione da convertire
+     * @return L'indice numerico corrispondente
+     * @throws RuntimeException se la posizione non è valida
+     */
     private int convertPositionToIndex(Position position) {
         switch (position) {
             case LABEL0: return 0;
@@ -96,34 +50,112 @@ public class PlayController {
         }
     }
 
+    /**
+     * Genera una nuova pallina per la sezione home.
+     * 
+     * @param request La richiesta contenente l'istruzione
+     * @return PlayResponse contenente la nuova pallina o un errore
+     */
+    @PostMapping("/newHomeBall")
+    public PlayResponse<?> newHomeBall(@RequestBody PlayRequest request) {
+        if (!"newHomeBall".equals(request.getInstraction())) {
+            return PlayResponse.error("Istruzione non valida");
+        }
+        
+        Ball[] availableBalls = game.getBased();
+        Ball selectedBall = availableBalls[currentHomeBallIndex];
+        
+        currentHomeBallIndex = (currentHomeBallIndex + 1) % availableBalls.length;
+        PlayResponse<Ball> response = new PlayResponse<>();
+        response.setBall(new Ball(selectedBall.getId(), selectedBall.getColor(), selectedBall.getPosition()));
+        response.setSuccess(true);
+        return response;
+    }
+
+    /**
+     * Ottiene le palline di una label specifica.
+     * 
+     * @param request La richiesta contenente l'ID della label
+     * @return PlayResponse contenente l'array di palline della label o un errore
+     */
+    @PostMapping("/getLabel")
+    public PlayResponse<?> getLabel(@RequestBody PlayRequest request) {
+        try {
+            if (!"getLabel".equals(request.getInstructions())) {
+                return PlayResponse.error("Istruzione non valida");
+            }
+            
+            int labelIndex = convertPositionToIndex(request.getId());
+            Ball[] label = game.getLabel(labelIndex);
+            return PlayResponse.forLabel(label);
+            
+        } catch (RuntimeException e) {
+            Ball[] errorArray = PlayResponse.getErrorBallArray();
+            return new PlayResponse<>(false, e.getMessage(), errorArray);
+        } catch (Exception e) {
+            Ball[] errorArray = PlayResponse.getErrorBallArray();
+            return new PlayResponse<>(false, e.getMessage(), errorArray);
+        }
+    }
+
+    /**
+     * Imposta una composizione di palline per una label specifica.
+     * 
+     * @param request La richiesta contenente l'ID della label e la composizione
+     * @return PlayResponse contenente la composizione aggiornata o un errore
+     */
+    @PostMapping("/setLabel")
+    public PlayResponse<?> setLabel(@RequestBody PlayRequest request) {
+        try {
+            if (!"setLabel".equals(request.getInstructions())) {
+                return PlayResponse.error("Istruzione non valida");
+            }
+            
+            int labelIndex = convertPositionToIndex(request.getId());
+            
+            game.setLabel(labelIndex, request.getComposition());
+            Ball[] updatedLabel = game.getLabel(labelIndex);
+            return PlayResponse.forComposition(updatedLabel);
+            
+        } catch (RuntimeException e) {
+            Ball[] errorArray = PlayResponse.getErrorBallArray();
+            return new PlayResponse<>(false, e.getMessage(), errorArray);
+        } catch (Exception e) {
+            Ball[] errorArray = PlayResponse.getErrorBallArray();
+            return new PlayResponse<>(false, e.getMessage(), errorArray);
+        }
+    }
 
 
+
+    /**
+     * Controlla una composizione proposta dall'utente e restituisce il numero di pin rossi e bianchi.
+     * Gestisce anche l'avanzamento del gioco e il controllo delle condizioni di vittoria.
+     * 
+     * @param request La richiesta contenente la composizione da controllare
+     * @return PlayResponse contenente i pin rossi/bianchi o un errore
+     */
     @PostMapping("/sendResponse")
-    public CheckGameResponse sendResponse(@RequestBody CheckRequest request) {
+    public PlayResponse<?> sendResponse(@RequestBody PlayRequest request) {
         try {
             if (!"sendResponse".equals(request.getInstruction())) {
-                return CheckGameResponse.getError();
+                return PlayResponse.error("Istruzione non valida");
             }
             
-            // Ottieni la composizione fornita dall'utente
             Ball[] userComposition = request.getComposition();
             
-            // Controllo che l'array sia di 4 elementi
             if (userComposition == null || userComposition.length != 4) {
-                return CheckGameResponse.getError("Array non completo");
+                return PlayResponse.error("Array non completo");
             }
             
-            // Ottieni la risposta corretta dal gioco
             Ball[] correctComposition = game.getResult();
             
             int redPins = 0;
             int whitePins = 0;
 
-            // Array per tracciare quali posizioni sono già state controllate
             boolean[] userUsed = new boolean[userComposition.length];
             boolean[] correctUsed = new boolean[correctComposition.length];
 
-            // palline rosse
             for (int i = 0; i < userComposition.length; i++) {
                 if (userComposition[i].getColor() == correctComposition[i].getColor()) {
                     redPins++;
@@ -132,14 +164,13 @@ public class PlayController {
                 }
             }
 
-            // palline bianche
             for (int i = 0; i < userComposition.length; i++) {
-                if (!userUsed[i]) { // Se questa posizione non è già stata usata per un pallino rosso
+                if (!userUsed[i]) {
                     for (int j = 0; j < correctComposition.length; j++) {
                         if (!correctUsed[j] && userComposition[i].getColor() == correctComposition[j].getColor()) {
                             whitePins++;
                             correctUsed[j] = true;
-                            break; // Esce dal loop interno per evitare conteggi multipli
+                            break;
                         }
                     }
                 }
@@ -158,33 +189,37 @@ public class PlayController {
                 game.setIsWin(true);
             }
 
-            return new CheckGameResponse(redPins, whitePins);
+            return PlayResponse.forCheckGame(redPins, whitePins);
 
         } catch (RuntimeException e) {
-            return CheckGameResponse.getError();
+            return PlayResponse.error(e.getMessage());
         } catch (Exception e) {
-            return CheckGameResponse.getError();
+            return PlayResponse.error(e.getMessage());
         }
     }
 
+    /**
+     * Ottiene il risultato corretto del gioco
+     * 
+     * @param message Il messaggio contenente l'istruzione
+     * @return PlayResponse contenente il risultato del gioco o un errore
+     */
     @PostMapping("/getResult")
-    public ResultResponse getResult(@RequestBody Message message) {
+    public PlayResponse<?> getResult(@RequestBody PlayRequest message) {
         try {
             if (!"getResult".equals(message.getInstraction())) {
-                return new ResultResponse(ResultResponse.getError());
+                return PlayResponse.error("Istruzione non valida");
             }
             
             Ball[] result = game.getResult();
-            return new ResultResponse(result);
+            return PlayResponse.forResult(result);
             
         } catch (RuntimeException e) {
-            return new ResultResponse(ResultResponse.getError());
+            Ball[] errorArray = PlayResponse.getErrorBallArray();
+            return new PlayResponse<>(false, e.getMessage(), errorArray);
         } catch (Exception e) {
-            return new ResultResponse(ResultResponse.getError());
+            Ball[] errorArray = PlayResponse.getErrorBallArray();
+            return new PlayResponse<>(false, e.getMessage(), errorArray);
         }
     }
-
-
-
-    
 }
