@@ -1,4 +1,4 @@
-package com.backend;
+package com.backend.Object;
 
 import java.io.Serializable;
 import com.backend.Enums.*;

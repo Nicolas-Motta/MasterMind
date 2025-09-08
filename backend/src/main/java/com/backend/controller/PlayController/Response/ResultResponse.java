@@ -1,8 +1,8 @@
 package com.backend.controller.PlayController.Response;
 
-import com.backend.Ball;
 import com.backend.Enums.Color;
 import com.backend.Enums.Position;
+import com.backend.Object.Ball;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResultResponse {

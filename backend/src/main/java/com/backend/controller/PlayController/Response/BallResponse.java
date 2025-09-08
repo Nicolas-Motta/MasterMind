@@ -1,7 +1,7 @@
 package com.backend.controller.PlayController.Response;
 
+import com.backend.Object.Ball;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.backend.Ball;
 
 public class BallResponse {
     @JsonProperty("Ball")

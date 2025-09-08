@@ -1,7 +1,7 @@
 package com.backend.controller.PlayController.Request;
 
+import com.backend.Object.Ball;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.backend.Ball;
 
 public class CheckRequest {
     @JsonProperty("instruction")

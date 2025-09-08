@@ -94,6 +94,6 @@ public class VariableNotificationService implements VariableChangeListener {
      * Metodo di convenienza per notificare il cambiamento di currentLabel
      */
     public void notifyCurrentLabelChange(Object newCurrentLabel) {
-        notifyVariableChange("currentLabel", newCurrentLabel, "ObjectGame");
+        notifyVariableChange("currentLabel", newCurrentLabel, "Game");
     }
 }

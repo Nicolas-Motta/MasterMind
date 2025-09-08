@@ -1,4 +1,4 @@
-package com.backend;
+package com.backend.Object;
 
 import java.io.Serializable;
 import java.io.FileOutputStream;
@@ -14,7 +14,7 @@ import com.backend.Enums.*;
 import com.backend.util.VariableWatcher;
 
 @Component
-public class ObjectGame implements Serializable {
+public class Game implements Serializable {
     private Ball[] based;
     private Ball[][] labels;
     private Ball[] result;
@@ -39,7 +39,7 @@ public class ObjectGame implements Serializable {
     @Autowired
     private VariableWatcher variableWatcher;
 
-    public ObjectGame() {
+    public Game() {
         this.status = Status.LOBBY;
     }
 
@@ -143,7 +143,7 @@ public class ObjectGame implements Serializable {
              ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             
             // Salviamo solo i dati del gioco, non il VariableWatcher che non è serializzabile
-            ObjectGameData gameData = new ObjectGameData(
+            GameData gameData = new GameData(
                 this.based, this.labels, this.result, 
                 this.status, this.currentLabel, this.isWin
             );
@@ -165,7 +165,7 @@ public class ObjectGame implements Serializable {
         try (FileInputStream fileIn = new FileInputStream(filePath);
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
             
-            ObjectGameData gameData = (ObjectGameData) in.readObject();
+            GameData gameData = (GameData) in.readObject();
             
             // Ripristiniamo tutti i dati usando i setter
             this.based = gameData.getBased();
@@ -185,7 +185,7 @@ public class ObjectGame implements Serializable {
     /**
      * Classe interna per contenere i dati serializzabili del gioco
      */
-    private static class ObjectGameData implements Serializable {
+    private static class GameData implements Serializable {
         private static final long serialVersionUID = 1L;
         
         private final Ball[] based;
@@ -195,8 +195,8 @@ public class ObjectGame implements Serializable {
         private final Position currentLabel;
         private final boolean isWin;
 
-        public ObjectGameData(Ball[] based, Ball[][] labels, Ball[] result, 
-                             Status status, Position currentLabel, boolean isWin) {
+        public GameData(Ball[] based, Ball[][] labels, Ball[] result, 
+                       Status status, Position currentLabel, boolean isWin) {
             this.based = based;
             this.labels = labels;
             this.result = result;

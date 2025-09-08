@@ -1,8 +1,8 @@
 package com.backend.controller.PlayController.Request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.backend.Ball;
 import com.backend.Enums.Position;
+import com.backend.Object.Ball;
 
 public class SetLabelRequest {
     @JsonProperty("instructions")

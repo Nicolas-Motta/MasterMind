@@ -61,11 +61,11 @@ public class VariableWatcher {
      * Metodi di convenienza per variabili comuni del gioco
      */
     public void notifyCurrentLabel(Object newValue) {
-        notifyChange("currentLabel", newValue, "ObjectGame");
+        notifyChange("currentLabel", newValue, "Game");
     }
     
     public void notifyIsWin(Object newValue) {
-        notifyChange("isWin", newValue, "ObjectGame");
+        notifyChange("isWin", newValue, "Game");
     }
     
     public void notifyPlayerScore(Object newScore) {

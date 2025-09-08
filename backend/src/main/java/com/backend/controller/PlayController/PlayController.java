@@ -3,11 +3,11 @@ package com.backend.controller.PlayController;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.backend.ObjectGame;
-import com.backend.Ball;
 import com.backend.Enums.Color;
 import com.backend.Enums.Position;
 import com.backend.Enums.Status;
+import com.backend.Object.Ball;
+import com.backend.Object.Game;
 import com.backend.controller.Message;
 import com.backend.controller.PlayController.Request.CheckRequest;
 import com.backend.controller.PlayController.Request.LabelRequest;
@@ -24,7 +24,7 @@ import com.backend.controller.PlayController.Response.SetLabelResponse;
 public class PlayController {
     
     @Autowired
-    private ObjectGame game;
+    private Game game;
     
     private int currentHomeBallIndex = 0;
 
