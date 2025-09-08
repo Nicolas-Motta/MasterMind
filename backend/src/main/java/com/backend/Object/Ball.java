@@ -1,7 +1,8 @@
 package com.backend.Object;
 
 import java.io.Serializable;
-import com.backend.Enums.*;
+import com.backend.Enums.Position;
+import com.backend.Enums.Color;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Ball implements Serializable {
@@ -14,10 +15,21 @@ public class Ball implements Serializable {
     @JsonProperty("position")
     private Position position;
 
-    // Default constructor for Jackson
+    // -------------------------------- CONSTRUCTORS --------------------------------//
+
+    /**
+     * Costruttore di default per Jackson.
+     */
     public Ball() {
     }
 
+    /**
+     * Costruttore che crea una Ball con colore e posizione.
+     * L'ID viene generato automaticamente basato sul colore.
+     * 
+     * @param color il colore della pallina
+     * @param position la posizione della pallina
+     */
     public Ball(Color color, Position position) {
         this.id =
             "01" +
@@ -35,61 +47,56 @@ public class Ball implements Serializable {
         this.position = position;
     }
 
+    /**
+     * Costruttore che crea una Ball con ID, colore e posizione specifici.
+     * 
+     * @param id l'identificativo della pallina
+     * @param color il colore della pallina
+     * @param position la posizione della pallina
+     */
     public Ball(String id, Color color, Position position) {
         this.id = id;
         this.color = color;
         this.position = position;
     }
-    
-    // Costruttore che ricava il colore dall'ID e richiede la posizione
-    public Ball(String id, Position position) {
-        this.id = id;
-        this.position = position;
-        this.color = deriveColorFromId(id);
-    }
-    
-    // Metodo helper per ricavare il colore dall'ID
-    private Color deriveColorFromId(String id) {
-        if (id == null || id.length() < 3) {
-            throw new IllegalArgumentException("ID deve essere almeno di 3 caratteri");
-        }
-        
-        // Estrae il terzo carattere dell'ID per determinare il colore
-        char colorCode = id.charAt(2);
-        
-        return switch (colorCode) {
-            case '0' -> Color.RED;
-            case '1' -> Color.BLUE;
-            case '2' -> Color.GREEN;
-            case '3' -> Color.YELLOW;
-            case '4' -> Color.ORANGE;
-            case '5' -> Color.PURPLE;
-            case 'E' -> Color.ERROR;
-            default -> throw new IllegalArgumentException("Codice colore non valido nell'ID: " + colorCode);
-        };
-    }
-    
+
+    // ----------------------------------- GETTERS --------------------------------//
+
+    /**
+     * Restituisce il colore della pallina.
+     * 
+     * @return il colore della pallina
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Restituisce la posizione della pallina.
+     * 
+     * @return la posizione della pallina
+     */
     public Position getPosition() {
         return position;
     }
     
+    /**
+     * Restituisce l'ID della pallina.
+     * 
+     * @return l'ID della pallina
+     */
     public String getId() {
         return id;
     }
 
+    // ----------------------------------- SETTERS ---------------------------------//
+
+    /**
+     * Imposta la posizione della pallina.
+     * 
+     * @param position la nuova posizione della pallina
+     */
     public void setPosition(Position position) {
         this.position = position;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 }
