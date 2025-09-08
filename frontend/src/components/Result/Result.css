@@ -1,0 +1,39 @@
+.result {
+    display: flex;
+    gap: 1vw;
+    align-items: center;
+
+    background-color: #23232b;
+
+    margin: 1vw;
+} 
+
+.result  > :nth-child(4) {
+    margin-right: 2vw;
+}
+
+.result > :nth-child(-n+4) {
+    filter: blur(4vh);
+}
+
+.result .victory-message {
+    width: 100%;
+    font-size: 4vh;
+    color: white;
+
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.result .victory-message.win {
+    color: gold;
+}
+
+.result .gap {
+    min-width: 2vw;
+}
+

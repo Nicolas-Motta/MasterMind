@@ -4,6 +4,7 @@ import { type Position } from '../Types/Position';
 
 interface WebSocketContextType {
     currentLabel: Position | null;
+    isWin: boolean | null;
     isConnected: boolean;
     sendMessage: (message: any) => void;
 }
@@ -24,6 +25,7 @@ interface WebSocketProviderProps {
 
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
     const [currentLabel, setCurrentLabel] = useState<Position | null>(null);
+    const [isWin, setIsWin] = useState<boolean | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const wsRef = useRef<WebSocket | null>(null);
 
@@ -42,6 +44,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
                     
                     if (update.variableName === 'currentLabel') {
                         setCurrentLabel(update.currentValue as Position);
+                    } else if (update.variableName === 'isWin') {
+                        setIsWin(update.currentValue as boolean);
                     }
                 } catch (error) {
                 }
@@ -61,7 +65,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
             };
         };
 
-        // Fetch iniziale del currentLabel
+        // Fetch iniziale del currentLabel e isWin
         const fetchInitialCurrentLabel = async () => {
             try {
                 const response = await fetch('/MasterMind/Variables/currentLabel');
@@ -72,8 +76,19 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
             }
         };
 
+        const fetchInitialIsWin = async () => {
+            try {
+                const response = await fetch('/MasterMind/Variables/isWin');
+                const data = await response.json();
+                console.log('Initial isWin:', data);
+                setIsWin(data.value as boolean);
+            } catch (error) {
+            }
+        };
+
         connectWebSocket();
         fetchInitialCurrentLabel();
+        fetchInitialIsWin();
         
         return () => {
             if (wsRef.current) {
@@ -92,7 +107,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     };
 
     return (
-        <WebSocketContext.Provider value={{ currentLabel, isConnected, sendMessage }}>
+        <WebSocketContext.Provider value={{ currentLabel, isWin, isConnected, sendMessage }}>
             {children}
         </WebSocketContext.Provider>
     );
