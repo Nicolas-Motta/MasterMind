@@ -50,7 +50,7 @@ public class ObjectGame implements Serializable {
     public Color getRandomColor() {
         Random random = new Random();
         Color[] colors = Color.values();
-        return colors[random.nextInt(colors.length)];
+        return colors[random.nextInt(colors.length-1)]; // Esclude Color.ERROR
     }
 
     public Status getStatus() {
