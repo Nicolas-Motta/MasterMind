@@ -64,8 +64,11 @@ public class ObjectGame implements Serializable {
                 new Ball(getRandomColor(), Position.RESULT),
                 new Ball(getRandomColor(), Position.RESULT),
         };
+
         setStatus(Status.PLAYING);
         setCurrentLabel(Position.LABEL0);
+        saveGameState("game_save.dat");
+        
     }
 
     public Color getRandomColor() {
