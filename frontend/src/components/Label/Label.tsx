@@ -238,13 +238,11 @@ export default function Label({ id }: LabelProps) {
         <div className="label" ref={labelRef}>
             {Array.from({ length: 4 }, (_, index) => (
                 <div className="dropZone" key={index}>
-                    {composition && composition[index] && composition[index] !== null ? (
+                    {composition !== null && composition[index] !== null ? (
                         <Ball
-                            getBallInfo={() => Promise.resolve({
-                                id: composition[index]!.id,
-                                color: composition[index]!.color as ColorType,
-                                position: (composition[index]!.position || id) as Position
-                            })}
+                            id={composition[index]!.id}
+                            color={composition[index]!.color as ColorType}
+                            position={(composition[index]!.position || id) as Position}
                         />
                     ) : null}
                 </div>

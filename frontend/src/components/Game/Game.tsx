@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../Button/Button";
 import OptionMenu from "../OptionMenu/OptionMenu";
 import Window from "../Window/Window";
@@ -10,8 +10,15 @@ import { type Position } from "../../Types/Position";
 import { usePositionContext } from "../../contexts/PositionContext";
 import "./Game.css"
 
+interface BallData {
+  id: string;
+  color: ColorType;
+  position: Position;
+}
+
 export default function Game() {
   const [optionMenu, setOptionMenu] = useState<React.ReactNode | null>(null);
+  const [composition, setComposition] = useState<(BallData | null)[] | null>(null);
   const { setBall } = usePositionContext();
 
   function toggleOptionMenu() {
@@ -22,13 +29,14 @@ export default function Game() {
     }
   }
 
-  const fetchBallData = useCallback(async (): Promise<{ id: string; color: ColorType; position: Position }> => {
-    try {
-      const requestBody = {
-        instraction: "newHomeBall"
-      };
+  useEffect(() => {
+    const fetchBallData = async () => {
+      try {
+        const requestBody = {
+          instraction: "getBaseBall"
+        };
 
-      const response = await fetch('http://localhost:8080/MasterMind/newHomeBall', {
+      const response = await fetch('/MasterMind/getBaseBall', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,27 +49,14 @@ export default function Game() {
       }
 
       const data = await response.json();
+      setComposition(data.Label);
 
-      if (data.Ball) {
-        return {
-          id: data.Ball.id,
-          color: data.Ball.color,
-          position: data.Ball.position
-        };
-      } else {
-        return {
-          id: `error`,
-          color: "ERROR",
-          position: "ERROR"
-        };
-      }
     } catch (error) {
-      return {
-        id: `error`,
-        color: "ERROR",
-        position: "ERROR"
-      };
+      console.error(`Errore nell'aggiornamento Label:`, error);
     }
+    };
+
+    fetchBallData();
   }, []);
 
   useEffect(() => {
@@ -93,7 +88,13 @@ export default function Game() {
       <Window className="homeBall">
         {Array.from({ length: 6 }, (_, index) => (
           <div key={index} style={{ position: 'relative' }}>
-            <Ball getBallInfo={fetchBallData} />
+            {composition !== null && composition[index] !== null ? (
+              <Ball
+                id={composition[index]!.id}
+                color={composition[index]!.color as ColorType}
+                position={(composition[index]!.position) as Position}
+              />
+            ) : null}
           </div>
         ))}
       </Window>

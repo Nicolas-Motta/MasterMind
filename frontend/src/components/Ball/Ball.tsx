@@ -5,34 +5,19 @@ import { usePositionContext } from "../../contexts/PositionContext";
 import "./Ball.css";
 
 export interface BallProps {
-    getBallInfo: () => Promise<{ id: string; color: ColorType; position: Position }>;
+    id: string;
+    color: ColorType;
+    position: Position;
 }
 
-export default function Ball({ getBallInfo}: BallProps) {
+export default function Ball({ id, color, position }: BallProps) {
     const ref = useRef<HTMLDivElement>(null);
     const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
     const [originalPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-    const [ballInfo, setBallInfo] = useState<{ id: string; color: ColorType; position: Position }>({ id: "error", color: "ERROR", position: "ERROR" });
+    const [ballInfo, setBallInfo] = useState<{ id: string; color: ColorType; position: Position }>({ id, color, position });
     const { setX, setY, setBall } = usePositionContext();
-
-    useEffect(() => {
-        if (getBallInfo) {
-            (async () => {
-                try {
-                    const info = await getBallInfo();
-                    setBallInfo(info);
-                } catch (error) {
-                    setBallInfo({
-                        id: "error",
-                        color: "ERROR",
-                        position: "ERROR"
-                    });
-                }
-            })();
-        }
-    }, [getBallInfo]);
 
     const onPointerDown = (e: React.PointerEvent) => {
         const px = e.clientX;

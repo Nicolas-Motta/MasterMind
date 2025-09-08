@@ -73,11 +73,9 @@ export default function Result() {
                 <div className="dropZone" key={index}>
                     {composition && composition[index] && composition[index] !== null ? (
                         <Ball
-                            getBallInfo={() => Promise.resolve({
-                                id: composition[index]!.id,
-                                color: composition[index]!.color as ColorType,
-                                position: (composition[index]!.position) as Position
-                            })}
+                            id={composition[index]!.id}
+                            color={composition[index]!.color as ColorType}
+                            position={(composition[index]!.position) as Position}
                         />
                     ) : null}
                 </div>
