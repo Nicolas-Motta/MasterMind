@@ -1,22 +1,41 @@
-# Documentazione PlayController
+# PlayController Documentation
 
 ## Panoramica
-Il PlayController gestisce la logica di gioco per ottenere le palline durante una partita di MasterMind. Fornisce endpoint per recuperare le palline dalla sequenza base del gioco.
+
+Il `PlayController` è il controller REST principale per la gestione delle operazioni di gioco del MasterMind. Fornisce un'API completa per l'interazione con le palline, la gestione delle label, la validazione delle mosse e il controllo dello stato di gioco.
+
+## Architettura
+
+### Annotazioni di Classe
+- `@RestController`: Definisce la classe come controller REST Spring Boot
+- `@RequestMapping("/MasterMind")`: Imposta il path base per tutti gli endpoint
+- `@CrossOrigin(origins = "*")`: Abilita CORS per tutte le origini (configurazione sviluppo)
+
+### Dipendenze Iniettate
+```java
+@Autowired
+private Game game;              // Istanza principale del gioco
+```
+
+### Stato Interno
+```java
+private int currentHomeBallIndex = 0;   // Indice corrente per le palline home
+```
 
 **Base URL**: `http://localhost:8080/MasterMind`
 
 ---
 
-## Endpoint
+## API Endpoints
 
-### Ottieni Pallina Casa
-**Endpoint**: `POST /MasterMind/newHomeBall`
+### 1. Genera Pallina Home - `/newHomeBall`
 
-**Descrizione**: Ottiene la prossima pallina dalla sequenza base del gioco. Ogni chiamata incrementa un contatore interno (`currentHomeBall`) e ritorna la pallina successiva dalla sequenza in modo ciclico.
+```java
+@PostMapping("/newHomeBall")
+public PlayResponse<?> newHomeBall(@RequestBody PlayRequest request)
+```
 
-**Headers**:
-- `Content-Type: application/json`
-- `Access-Control-Allow-Origin: http://localhost:3000`
+**Descrizione**: Genera una nuova pallina dalla sequenza base del gioco per l'area home.
 
 **Request Body**:
 ```json
@@ -25,123 +44,313 @@ Il PlayController gestisce la logica di gioco per ottenere le palline durante un
 }
 ```
 
-**Response Successo**:
+**Responses**:
+- **Successo**: 
 ```json
 {
+    "success": true,
     "Ball": {
         "id": "01015",
-        "color": "BLUE",
+        "color": "BLUE", 
         "position": "HOME"
     }
 }
 ```
+- **Errore**: `{"success": false, "message": "Istruzione non valida"}`
 
-**Response Errore** (comando non riconosciuto):
+**Comportamento**:
+- Ottiene la sequenza base tramite `game.getBased()`
+- Incrementa ciclicamente `currentHomeBallIndex`
+- Crea una nuova istanza Ball con i dati della pallina selezionata
+
+---
+
+### 2. Ottieni Label - `/getLabel`
+
+```java
+@PostMapping("/getLabel")
+public PlayResponse<?> getLabel(@RequestBody PlayRequest request)
+```
+
+**Descrizione**: Recupera l'array di palline di una label specifica.
+
+**Request Body**:
 ```json
 {
-    "Ball": {
-        "id": "error",
-        "color": "ERROR",
-        "position": "HOME"
+    "instructions": "getLabel",
+    "id": "LABEL0"
+}
+```
+
+**Responses**:
+- **Successo**: 
+```json
+{
+    "success": true,
+    "composition": [
+        {"id": "01023", "color": "RED", "position": "LABEL0"},
+        {"id": "01034", "color": "BLUE", "position": "LABEL0"},
+        {"id": "01045", "color": "GREEN", "position": "LABEL0"},
+        {"id": "01056", "color": "YELLOW", "position": "LABEL0"}
+    ]
+}
+```
+- **Errore**: Array di palline errore con messaggio specifico
+
+**Validazioni**:
+- Istruzione deve essere esattamente `"getLabel"`
+- Position ID deve essere valida (LABEL0-LABEL5)
+
+---
+
+### 3. Imposta Label - `/setLabel`
+
+```java
+@PostMapping("/setLabel")
+public PlayResponse<?> setLabel(@RequestBody PlayRequest request)
+```
+
+**Descrizione**: Imposta una composizione di palline per una label specifica.
+
+**Request Body**:
+```json
+{
+    "instructions": "setLabel",
+    "id": "LABEL1",
+    "composition": [
+        {"id": "01023", "color": "RED", "position": "LABEL1"},
+        {"id": "01034", "color": "BLUE", "position": "LABEL1"},
+        {"id": "01045", "color": "GREEN", "position": "LABEL1"},
+        {"id": "01056", "color": "YELLOW", "position": "LABEL1"}
+    ]
+}
+```
+
+**Responses**:
+- **Successo**: Composizione aggiornata della label
+- **Errore**: Array di palline errore con messaggio specifico
+
+**Operazioni Eseguite**:
+1. Valida l'istruzione `"setLabel"`
+2. Converte Position enum in indice numerico
+3. Chiama `game.setLabel()` per aggiornare la composizione
+4. Restituisce la composizione aggiornata tramite `game.getLabel()`
+
+---
+
+### 4. Controlla Risposta - `/sendResponse`
+
+```java
+@PostMapping("/sendResponse")
+public PlayResponse<?> sendResponse(@RequestBody PlayRequest request)
+```
+
+**Descrizione**: Controlla una composizione proposta dall'utente e calcola pin rossi/bianchi.
+
+**Request Body**:
+```json
+{
+    "instruction": "sendResponse",
+    "composition": [
+        {"id": "01023", "color": "RED", "position": "GAME"},
+        {"id": "01034", "color": "BLUE", "position": "GAME"},
+        {"id": "01045", "color": "GREEN", "position": "GAME"},
+        {"id": "01056", "color": "YELLOW", "position": "GAME"}
+    ]
+}
+```
+
+**Responses**:
+- **Successo**: 
+```json
+{
+    "success": true,
+    "redPins": 2,
+    "whitePins": 1,
+    "finished": false
+}
+```
+- **Vittoria**: 
+```json
+{
+    "success": true,
+    "redPins": 4,
+    "whitePins": 0,
+    "finished": true
+}
+```
+- **Errore**: `{"success": false, "message": "Array non completo"}`
+
+**Algoritmo Pin Counting**:
+1. **Pin Rossi**: Conta le palline nella posizione corretta con colore corretto
+2. **Pin Bianchi**: Conta le palline con colore corretto ma posizione sbagliata
+3. **Gestione Vittoria**: Se redPins == 4, imposta game status a FINISHED
+
+**Validazioni**:
+- Istruzione deve essere `"sendResponse"`
+- Composizione deve contenere esattamente 4 palline
+- Controlla condizioni di vittoria automaticamente
+
+---
+
+### 5. Ottieni Risultato - `/getResult`
+
+```java
+@PostMapping("/getResult")
+public PlayResponse<?> getResult(@RequestBody PlayRequest request)
+```
+
+**Descrizione**: Restituisce la soluzione corretta del gioco.
+
+**Request Body**:
+```json
+{
+    "instraction": "getResult"
+}
+```
+
+**Responses**:
+- **Successo**: 
+```json
+{
+    "success": true,
+    "result": [
+        {"id": "01067", "color": "PURPLE", "position": "GAME"},
+        {"id": "01078", "color": "ORANGE", "position": "GAME"},
+        {"id": "01089", "color": "RED", "position": "GAME"},
+        {"id": "01090", "color": "GREEN", "position": "GAME"}
+    ]
+}
+```
+- **Errore**: Array di palline errore con messaggio specifico
+
+## Classi di Supporto
+
+### PlayRequest (Unificata)
+```java
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PlayRequest {
+    @JsonProperty("instruction")  private String instruction;    // Per sendResponse
+    @JsonProperty("instructions") private String instructions;   // Per getLabel/setLabel
+    @JsonProperty("instraction")  private String instraction;    // Per newHomeBall/getResult
+    @JsonProperty("id")           private Position id;           // Per getLabel/setLabel
+    @JsonProperty("composition")  private Ball[] composition;    // Per setLabel/sendResponse
+}
+```
+
+**Caratteristiche**:
+- **Unificata**: Combina tutti i campi dei request precedenti
+- **Metodi Factory**: `forCheck()`, `forLabel()`, `forSetLabel()`, `forMessage()`
+- **Metodi Utility**: `isCheckRequest()`, `isLabelRequest()`, `getAnyInstruction()`
+
+### PlayResponse<T>
+```java
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PlayResponse<T> {
+    @JsonProperty("success")     private Boolean success;
+    @JsonProperty("message")     private String message;
+    @JsonProperty("Ball")        private Ball ball;           // Per newHomeBall
+    @JsonProperty("composition") private Ball[] composition;  // Per getLabel/setLabel
+    @JsonProperty("result")      private Ball[] result;      // Per getResult
+    @JsonProperty("redPins")     private Integer redPins;    // Per sendResponse
+    @JsonProperty("whitePins")   private Integer whitePins;  // Per sendResponse
+    @JsonProperty("finished")    private Boolean finished;   // Per sendResponse
+}
+```
+
+**Metodi Factory Disponibili**:
+- `PlayResponse.error(String message)` - Errore generico
+- `PlayResponse.forLabel(Ball[] balls)` - Risposta getLabel
+- `PlayResponse.forComposition(Ball[] balls)` - Risposta setLabel
+- `PlayResponse.forResult(Ball[] balls)` - Risposta getResult
+- `PlayResponse.forCheckGame(int red, int white, boolean finished)` - Risposta sendResponse
+
+## Metodi di Utilità
+
+### `convertPositionToIndex(Position position)`
+**Scopo**: Converte enum Position in indice numerico per accesso array.  
+**Mapping**:
+- `LABEL0` → 0
+- `LABEL1` → 1
+- `LABEL2` → 2
+- `LABEL3` → 3
+- `LABEL4` → 4
+- `LABEL5` → 5
+
+**Throws**: `RuntimeException` per posizioni non valide
+
+### `resetHomeBallIndex()`
+**Scopo**: Resetta l'indice delle palline home (chiamato da SystemController)
+
+## Gestione degli Errori
+
+### Tipi di Errore
+1. **Istruzione Non Valida**: Quando il campo instruction/instructions/instraction non corrisponde
+2. **Position Non Valida**: Quando l'enum Position non è supportato  
+3. **Array Incompleto**: Quando la composizione non ha esattamente 4 elementi
+4. **Runtime Exceptions**: Errori durante l'accesso al game state
+
+### Pattern di Risposta
+- **Errori Semplici**: `{"success": false, "message": "Descrizione errore"}`
+- **Errori con Array**: Array di palline errore tramite `PlayResponse.getErrorBallArray()`
+
+## Algoritmi Chiave
+
+### Pin Counting Algorithm (sendResponse)
+```java
+// Conta pin rossi (posizione e colore corretti)
+for (int i = 0; i < 4; i++) {
+    if (userComposition[i].getColor() == correctComposition[i].getColor()) {
+        redPins++;
+        // Marca come usate per evitare doppi conteggi
+    }
+}
+
+// Conta pin bianchi (colore corretto, posizione sbagliata)
+for (int i = 0; i < 4; i++) {
+    if (!usedCorrect[i]) { // Non già contata come pin rosso
+        for (int j = 0; j < 4; j++) {
+            if (!usedUser[j] && userComposition[j].getColor() == correctComposition[i].getColor()) {
+                whitePins++;
+                break;
+            }
+        }
     }
 }
 ```
 
----
-
-## Modelli Dati
-
-### Message (Request)
-```json
-{
-    "instraction": "string"  // Deve essere esattamente "newHomeBall"
-}
+### Sequenza Ciclica (newHomeBall)
+```java
+Ball selectedBall = availableBalls[currentHomeBallIndex];
+currentHomeBallIndex = (currentHomeBallIndex + 1) % availableBalls.length;
 ```
 
-### BallResponse (Response)
-```json
-{
-    "Ball": {
-        "id": "string",      // ID univoco formato da "01" + codiceColore + numeroRandom
-        "color": "enum",     // RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE, ERROR
-        "position": "enum"   // HOME, GAME, ERROR
-    }
-}
-```
+## Best Practices Implementate
 
-### Ball Object
-- **id**: Stringa identificativa univoca (formato: "01" + codiceColore + numero)
-- **color**: Enum che rappresenta il colore della pallina
-- **position**: Enum che rappresenta la posizione della pallina nel gioco
+### 1. **Type Safety**
+- Utilizzo di generics per responses tipizzate
+- Enum per Position invece di magic numbers
 
----
+### 2. **Unified Request Pattern**
+- Single DTO class per tutte le operazioni
+- Factory methods per creazione type-safe
 
-## Colori Disponibili
+### 3. **Consistent Error Handling**
+- Pattern uniforme per validazione istruzioni
+- Gestione eccezioni standardizzata
 
-| Colore    | Codice ID | Enum Value |
-|-----------|-----------|------------|
-| Rosso     | 0         | RED        |
-| Blu       | 1         | BLUE       |
-| Verde     | 2         | GREEN      |
-| Giallo    | 3         | YELLOW     |
-| Arancione | 4         | ORANGE     |
-| Viola     | 5         | PURPLE     |
-| Errore    | E         | ERROR      |
+### 4. **Game State Management**
+- Separazione tra controllo logico e stato del gioco
+- Gestione automatica delle condizioni di vittoria
 
----
+### 5. **API Design**
+- Endpoint RESTful semantici
+- Response structures appropriate per ogni operazione
+- Validazione completa degli input
 
-## Comportamento
+## Integrazione con SystemController
 
-1. **Sequenza Ciclica**: Le palline vengono restituite in sequenza ciclica dalla sequenza base del gioco (`game.getBased()`)
-2. **Contatore Interno**: Il controller mantiene un contatore `currentHomeBall` che si incrementa ad ogni chiamata
-3. **Validazione**: Se l'`instraction` non è esattamente "newHomeBall", ritorna una pallina di errore
-4. **Posizione**: Tutte le palline ritornate hanno position "HOME"
-
----
-
-## Esempi di Utilizzo
-
-### Richiesta Valida
-```bash
-curl -X POST http://localhost:8080/MasterMind/newHomeBall \
-  -H "Content-Type: application/json" \
-  -d '{"instraction": "newHomeBall"}'
-```
-
-**Risposta**:
-```json
-{
-    "Ball": {
-        "id": "01243",
-        "color": "ORANGE",
-        "position": "HOME"
-    }
-}
-```
-
-### Richiesta Non Valida
-```bash
-curl -X POST http://localhost:8080/MasterMind/newHomeBall \
-  -H "Content-Type: application/json" \
-  -d '{"instraction": "wrongCommand"}'
-```
-
-**Risposta**:
-```json
-{
-    "Ball": {
-        "id": "error",
-        "color": "ERROR", 
-        "position": "HOME"
-    }
-}
-```
-
----
-
-## Note Tecniche
-
-- **CORS**: Configurato per accettare richieste da `http://localhost:3000`
-- **Dipendenze**: Utilizza `@Autowired ObjectGame game` per accedere alla sequenza base
-- **Stato**: Mantiene stato interno con `currentHomeBall` per tracciare la posizione nella sequenza
-- **Modulo**: L'operazione modulo (`%`) garantisce che l'indice rimanga sempre valido anche dopo molte richieste
+Il `PlayController` è utilizzato dal `SystemController` per:
+- **Reset Home Ball Index**: Chiamata `resetHomeBallIndex()` durante `newGame`
+- **Game State Coordination**: Mantenimento consistenza stato tra controllers
+- **Separation of Concerns**: SystemController gestisce persistence, PlayController gestisce gameplay
