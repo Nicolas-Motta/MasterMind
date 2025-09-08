@@ -1,9 +1,12 @@
 package com.backend;
 
+import java.io.Serializable;
 import com.backend.Enums.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Ball {
+public class Ball implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     @JsonProperty("id")
     private String id;
     @JsonProperty("color")

@@ -1,6 +1,11 @@
 package com.backend;
 
 import java.io.Serializable;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.IOException;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Random;
@@ -123,5 +128,86 @@ public class ObjectGame implements Serializable {
         if (variableWatcher != null && !currentLabel.equals(oldCurrentLabel)) {
             variableWatcher.notifyCurrentLabel(currentLabel);
         }
+    }
+
+    /**
+     * Serializza l'istanza corrente del gioco in un file
+     * @param filePath Il percorso del file dove salvare l'istanza
+     * @return true se il salvataggio è riuscito, false altrimenti
+     */
+    public boolean saveGameState(String filePath) {
+        try (FileOutputStream fileOut = new FileOutputStream(filePath);
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            
+            // Salviamo solo i dati del gioco, non il VariableWatcher che non è serializzabile
+            ObjectGameData gameData = new ObjectGameData(
+                this.based, this.labels, this.result, 
+                this.status, this.currentLabel, this.isWin
+            );
+            
+            out.writeObject(gameData);
+            return true;
+        } catch (IOException e) {
+            System.err.println("Errore durante il salvataggio del gioco: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Carica un'istanza del gioco da un file
+     * @param filePath Il percorso del file da cui caricare l'istanza
+     * @return true se il caricamento è riuscito, false altrimenti
+     */
+    public boolean loadGameState(String filePath) {
+        try (FileInputStream fileIn = new FileInputStream(filePath);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            
+            ObjectGameData gameData = (ObjectGameData) in.readObject();
+            
+            // Ripristiniamo tutti i dati usando i setter
+            this.based = gameData.getBased();
+            this.labels = gameData.getLabels();
+            this.result = gameData.getResult();
+            setStatus(gameData.getStatus());
+            setCurrentLabel(gameData.getCurrentLabel());
+            setIsWin(gameData.getIsWin());
+            
+            return true;
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Errore durante il caricamento del gioco: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Classe interna per contenere i dati serializzabili del gioco
+     */
+    private static class ObjectGameData implements Serializable {
+        private static final long serialVersionUID = 1L;
+        
+        private final Ball[] based;
+        private final Ball[][] labels;
+        private final Ball[] result;
+        private final Status status;
+        private final Position currentLabel;
+        private final boolean isWin;
+
+        public ObjectGameData(Ball[] based, Ball[][] labels, Ball[] result, 
+                             Status status, Position currentLabel, boolean isWin) {
+            this.based = based;
+            this.labels = labels;
+            this.result = result;
+            this.status = status;
+            this.currentLabel = currentLabel;
+            this.isWin = isWin;
+        }
+
+        // Getters
+        public Ball[] getBased() { return based; }
+        public Ball[][] getLabels() { return labels; }
+        public Ball[] getResult() { return result; }
+        public Status getStatus() { return status; }
+        public Position getCurrentLabel() { return currentLabel; }
+        public boolean getIsWin() { return isWin; }
     }
 }
