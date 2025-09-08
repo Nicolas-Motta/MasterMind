@@ -206,4 +206,64 @@ public class PlayController {
             return new PlayResponse<>(false, e.getMessage(), errorArray);
         }
     }
+
+    /**
+     * Calcola i pin rossi e bianchi per una composizione senza modificare lo stato del gioco
+     * Utilizzato per mostrare il risultato di label già giocati
+     * 
+     * @param request La richiesta contenente la composizione da controllare
+     * @return PlayResponse contenente i pin rossi/bianchi o un errore
+     */
+    @PostMapping("/calculatePins")
+    public PlayResponse<?> calculatePins(@RequestBody PlayRequest request) {
+        try {
+            if (!"calculatePins".equals(request.getInstruction())) {
+                return PlayResponse.error("Istruzione non valida");
+            }
+            
+            Ball[] userComposition = request.getComposition();
+            
+            if (userComposition == null || userComposition.length != 4) {
+                return PlayResponse.error("Array non completo");
+            }
+            
+            Ball[] correctComposition = game.getResult();
+            
+            int redPins = 0;
+            int whitePins = 0;
+
+            boolean[] userUsed = new boolean[userComposition.length];
+            boolean[] correctUsed = new boolean[correctComposition.length];
+
+            // Calcola pin rossi (posizione e colore corretti)
+            for (int i = 0; i < userComposition.length; i++) {
+                if (userComposition[i].getColor() == correctComposition[i].getColor()) {
+                    redPins++;
+                    userUsed[i] = true;
+                    correctUsed[i] = true;
+                }
+            }
+
+            // Calcola pin bianchi (colore corretto ma posizione sbagliata)
+            for (int i = 0; i < userComposition.length; i++) {
+                if (!userUsed[i]) {
+                    for (int j = 0; j < correctComposition.length; j++) {
+                        if (!correctUsed[j] && userComposition[i].getColor() == correctComposition[j].getColor()) {
+                            whitePins++;
+                            correctUsed[j] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Restituisce solo il risultato del calcolo senza modificare lo stato del gioco
+            return PlayResponse.forCheckGame(redPins, whitePins);
+
+        } catch (RuntimeException e) {
+            return PlayResponse.error(e.getMessage());
+        } catch (Exception e) {
+            return PlayResponse.error(e.getMessage());
+        }
+    }
 }

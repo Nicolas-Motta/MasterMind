@@ -43,6 +43,27 @@ export default function Label({ id }: LabelProps) {
     const isCurrentLabel = () => {
         return currentLabel === id;
     };
+
+    // Funzione helper per convertire la posizione in numero per confronti
+    const getPositionNumber = (position: Position): number => {
+        switch (position) {
+            case "LABEL0": return 0;
+            case "LABEL1": return 1;
+            case "LABEL2": return 2;
+            case "LABEL3": return 3;
+            case "LABEL4": return 4;
+            case "LABEL5": return 5;
+            default: return -1;
+        }
+    };
+
+    // Funzione helper per verificare se questo label è già stato giocato
+    const isLabelPlayed = (): boolean => {
+        if (!currentLabel) return false;
+        const currentLabelNum = getPositionNumber(currentLabel);
+        const thisLabelNum = getPositionNumber(id);
+        return thisLabelNum < currentLabelNum;
+    };
     
     useEffect(() => {
         if (!ball || !labelRef.current) return;
@@ -150,6 +171,37 @@ export default function Label({ id }: LabelProps) {
         }
     };
 
+    // Funzione per calcolare i pin senza inviare la risposta
+    const calculatePins = async (compositionData: (BallData | null)[]) => {
+        try {
+            const requestBody = {
+                instruction: "calculatePins",
+                id: id,
+                composition: compositionData
+            };
+
+            const response = await fetch('/MasterMind/calculatePins', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data: CheckResponse = await response.json();
+
+            setCheckResult(data);
+
+        } catch (error) {
+            console.error(`Errore nel calcolo dei pin:`, error);
+            setCheckResult(null);
+        }
+    };
+
     const sendResponse = async () => {
 
         if (!isCurrentLabel()) {
@@ -223,6 +275,11 @@ export default function Label({ id }: LabelProps) {
                     labelData = Array.from({ length: 4 }, () => null);
                 }
                 setComposition(labelData);
+                
+                // Calcola automaticamente i pin solo per i label già giocati
+                if (isLabelPlayed()) {
+                    calculatePins(labelData);
+                }
 
             } catch (err) {
                 setComposition(
