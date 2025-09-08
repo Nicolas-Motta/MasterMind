@@ -14,6 +14,7 @@ import com.backend.controller.PlayController.Request.SetLabelRequest;
 import com.backend.controller.PlayController.Response.BallResponse;
 import com.backend.controller.PlayController.Response.CheckGameResponse;
 import com.backend.controller.PlayController.Response.LabelResponse;
+import com.backend.controller.PlayController.Response.ResultResponse;
 import com.backend.controller.PlayController.Response.SetLabelResponse;
 
 @RestController
@@ -159,6 +160,25 @@ public class PlayController {
             return CheckGameResponse.getError();
         }
     }
+
+    @PostMapping("/getResult")
+    public ResultResponse getResult(@RequestBody Message message) {
+        try {
+            if (!"getResult".equals(message.getInstraction())) {
+                return new ResultResponse(ResultResponse.getError());
+            }
+            
+            Ball[] result = game.getResult();
+            return new ResultResponse(result);
+            
+        } catch (RuntimeException e) {
+            return new ResultResponse(ResultResponse.getError());
+        } catch (Exception e) {
+            return new ResultResponse(ResultResponse.getError());
+        }
+    }
+
+
 
     
 }
