@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.backend.Object.Game;
 import com.backend.controller.SystemController.Request.*;
 import com.backend.controller.SystemController.Response.*;
-import com.backend.controller.PlayController.PlayController;
 
 /**
  * Controller REST per la gestione delle operazioni di sistema del gioco MasterMind.
@@ -19,9 +18,6 @@ public class SystemController {
 
     @Autowired
     private Game game;
-
-    @Autowired
-    private PlayController playController;
 
     String filePath = "game.dat";
 
@@ -60,7 +56,6 @@ public class SystemController {
     public SystemResponse<Boolean> createNewGame(@RequestBody SystemRequest message) {
         if (isValidInstruction(message.getInstraction(), "newGame")) {
             this.game.newGame();
-            this.playController.resetHomeBallIndex(); // Reset dell'indice delle palline home
             return SystemResponse.gameOperation(true);
         } else {
             return SystemResponse.gameOperation(false);

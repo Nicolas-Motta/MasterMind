@@ -21,15 +21,6 @@ public class PlayController {
     
     @Autowired
     private Game game;
-    
-    private int currentHomeBallIndex = 0;
-
-    /**
-     * Resetta l'indice della pallina corrente.
-     */
-    public void resetHomeBallIndex() {
-        this.currentHomeBallIndex = 0;
-    }
 
     /**
      * Converte una posizione enum in un indice numerico.
@@ -51,25 +42,18 @@ public class PlayController {
     }
 
     /**
-     * Genera una nuova pallina per la sezione home.
+     * Ottiene l'intero array di palline home disponibili.
      * 
      * @param request La richiesta contenente l'istruzione
-     * @return PlayResponse contenente la nuova pallina o un errore
+     * @return PlayResponse contenente l'intero array di palline home o un errore
      */
-    @PostMapping("/newHomeBall")
-    public PlayResponse<?> newHomeBall(@RequestBody PlayRequest request) {
-        if (!"newHomeBall".equals(request.getInstraction())) {
+    @PostMapping("/getBaseBall")
+    public PlayResponse<?> getBaseBall(@RequestBody PlayRequest request) {
+        if (!"getBaseBall".equals(request.getInstraction())) {
             return PlayResponse.error("Istruzione non valida");
         }
         
-        Ball[] availableBalls = game.getBased();
-        Ball selectedBall = availableBalls[currentHomeBallIndex];
-        
-        currentHomeBallIndex = (currentHomeBallIndex + 1) % availableBalls.length;
-        PlayResponse<Ball> response = new PlayResponse<>();
-        response.setBall(new Ball(selectedBall.getId(), selectedBall.getColor(), selectedBall.getPosition()));
-        response.setSuccess(true);
-        return response;
+        return PlayResponse.forHomeBalls(game.getBased());
     }
 
     /**

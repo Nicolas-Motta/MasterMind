@@ -117,6 +117,13 @@ public class PlayResponse<T> {
         return response;
     }
 
+    public static PlayResponse<Ball[]> forHomeBalls(Ball[] baseBalls) {
+        PlayResponse<Ball[]> response = new PlayResponse<>();
+        response.label = baseBalls;
+        response.success = true;
+        return response;
+    }
+
     // -------------------------------- UTILITY METHODS --------------------------------//
 
     // Utility methods per array di errore (private per semplificare)
