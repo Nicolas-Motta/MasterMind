@@ -3,7 +3,7 @@ package com.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.backend.controller.websocket.VariablesWebSocketHandler;
+import com.backend.controller.VariableController.VariableController;
 import com.backend.event.VariableChangeEvent;
 import com.backend.event.VariableChangeListener;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class VariableNotificationService implements VariableChangeListener {
     
     @Autowired
-    private VariablesWebSocketHandler webSocketHandler;
+    private VariableController webSocketHandler;
     
     // Mappa per memorizzare i listener per ogni variabile
     private final Map<String, List<VariableChangeListener>> listeners = new ConcurrentHashMap<>();
@@ -43,14 +43,12 @@ public class VariableNotificationService implements VariableChangeListener {
     /**
      * Notifica il cambiamento di una variabile
      */
-    public void notifyVariableChange(String variableName, Object newValue, String source) {
-        Object oldValue = currentValues.get(variableName);
-        
+    public void notifyVariableChange(String variableName, Object newValue) {
         // Aggiorna il valore corrente
         currentValues.put(variableName, newValue);
         
-        // Crea l'evento
-        VariableChangeEvent event = new VariableChangeEvent(variableName, oldValue, newValue, source);
+        // Crea l'evento con il nuovo costruttore
+        VariableChangeEvent event = new VariableChangeEvent(variableName, newValue);
         
         // Notifica tutti i listener registrati per questa variabile
         List<VariableChangeListener> variableListeners = listeners.get(variableName);
@@ -94,6 +92,6 @@ public class VariableNotificationService implements VariableChangeListener {
      * Metodo di convenienza per notificare il cambiamento di currentLabel
      */
     public void notifyCurrentLabelChange(Object newCurrentLabel) {
-        notifyVariableChange("currentLabel", newCurrentLabel, "Game");
+        notifyVariableChange("currentLabel", newCurrentLabel);
     }
 }

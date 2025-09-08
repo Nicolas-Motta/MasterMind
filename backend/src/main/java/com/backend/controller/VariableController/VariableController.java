@@ -1,4 +1,4 @@
-package com.backend.controller.websocket;
+package com.backend.controller.VariableController;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import com.backend.event.VariableChangeEvent;
 
 @Component
-public class VariablesWebSocketHandler extends TextWebSocketHandler {
+public class VariableController extends TextWebSocketHandler {
     
     private final CopyOnWriteArraySet<WebSocketSession> sessions = new CopyOnWriteArraySet<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -18,15 +18,11 @@ public class VariablesWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
-        System.out.println("Nuova connessione WebSocket stabilita: " + session.getId());
-        System.out.println("Sessioni attive: " + sessions.size());
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         sessions.remove(session);
-        System.out.println("Connessione WebSocket chiusa: " + session.getId() + " - Status: " + status);
-        System.out.println("Sessioni rimanenti: " + sessions.size());
     }
 
     @Override
@@ -66,15 +62,6 @@ public class VariablesWebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
-     * Metodo deprecato per compatibilità - usa sendVariableUpdate invece
-     */
-    @Deprecated
-    public void sendCurrentLabelUpdate(Object currentLabel) {
-        VariableChangeEvent event = new VariableChangeEvent("currentLabel", null, currentLabel, "Legacy");
-        sendVariableUpdate(event);
-    }
-
-    /**
      * Classe per rappresentare l'aggiornamento di una variabile via WebSocket
      */
     public static class WebSocketVariableUpdate {
@@ -104,44 +91,4 @@ public class VariablesWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    /**
-     * Classe deprecata per compatibilità
-     */
-    @Deprecated
-    public static class VariableUpdate {
-        private String variableName;
-        private String value;
-        private long timestamp;
-
-        public VariableUpdate(String variableName, String value) {
-            this.variableName = variableName;
-            this.value = value;
-            this.timestamp = System.currentTimeMillis();
-        }
-
-        // Getters e setters
-        public String getVariableName() {
-            return variableName;
-        }
-
-        public void setVariableName(String variableName) {
-            this.variableName = variableName;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public long getTimestamp() {
-            return timestamp;
-        }
-
-        public void setTimestamp(long timestamp) {
-            this.timestamp = timestamp;
-        }
-    }
 }

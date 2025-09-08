@@ -19,14 +19,7 @@ public class VariableWatcher {
      * Notifica il cambiamento di una variabile
      */
     public void notifyChange(String variableName, Object newValue) {
-        notifyChange(variableName, newValue, "Unknown");
-    }
-    
-    /**
-     * Notifica il cambiamento di una variabile con sorgente specifica
-     */
-    public void notifyChange(String variableName, Object newValue, String source) {
-        notificationService.notifyVariableChange(variableName, newValue, source);
+        notificationService.notifyVariableChange(variableName, newValue);
     }
     
     /**
@@ -61,18 +54,10 @@ public class VariableWatcher {
      * Metodi di convenienza per variabili comuni del gioco
      */
     public void notifyCurrentLabel(Object newValue) {
-        notifyChange("currentLabel", newValue, "Game");
+        notifyChange("currentLabel", newValue);
     }
     
     public void notifyIsWin(Object newValue) {
-        notifyChange("isWin", newValue, "Game");
-    }
-    
-    public void notifyPlayerScore(Object newScore) {
-        notifyChange("playerScore", newScore, "GameLogic");
-    }
-    
-    public void notifyCurrentRound(Object newRound) {
-        notifyChange("currentRound", newRound, "GameLogic");
+        notifyChange("isWin", newValue);
     }
 }
