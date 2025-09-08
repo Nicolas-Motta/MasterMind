@@ -2,135 +2,200 @@
 
 ## Panoramica
 
-La classe `SystemController` è il controller principale per la gestione delle operazioni di sistema del gioco MasterMind. Gestisce le richieste HTTP relative alla comunicazione con il client e alla gestione delle partite.
+Il `SystemController` è il controller REST principale per la gestione delle operazioni di sistema del gioco MasterMind. Fornisce un'API unificata per la comunicazione client-server, la gestione delle partite e le operazioni di persistenza dei dati.
 
-## Annotazioni
+## Architettura
 
-- `@RestController`: Indica che questa classe è un controller REST che gestisce richieste HTTP
-- `@RequestMapping("/MasterMind")`: Definisce il percorso base per tutti gli endpoint (`/MasterMind`)
-- `@CrossOrigin(origins = "http://localhost:3000")`: Abilita le richieste CORS dal frontend React in esecuzione su localhost:3000
+### Annotazioni di Classe
+- `@RestController`: Definisce la classe come controller REST Spring Boot
+- `@RequestMapping("/MasterMind")`: Imposta il path base per tutti gli endpoint
+- `@CrossOrigin(origins = "*")`: Abilita CORS per tutte le origini (configurazione sviluppo)
 
-## Dipendenze
-
-### ObjectGame
+### Dipendenze Iniettate
 ```java
 @Autowired
-private ObjectGame game;
+private Game game;              // Istanza principale del gioco
+
+@Autowired  
+private PlayController playController;  // Controller per le operazioni di gioco
 ```
-- **Tipo**: `ObjectGame`
-- **Scope**: Istanza del gioco gestita da Spring
-- **Funzione**: Rappresenta lo stato corrente della partita MasterMind
 
-## Endpoints
+### Configurazione
+```java
+String filePath = "game.dat";   // File per la persistenza del gioco
+```
 
-### 1. Ping Endpoint
+## API Endpoints
+
+### 1. Health Check - `/ping`
 
 ```java
 @PostMapping("/ping")
-public CheckResponse ping(@RequestBody Message message)
+public SystemResponse<String> ping(@RequestBody SystemRequest message)
 ```
 
-**Descrizione**: Endpoint per testare la connettività con il server.
+**Descrizione**: Endpoint per verificare lo stato del server e la connettività.
 
-**Parametri**:
-- `message`: Oggetto `Message` contenente l'istruzione
-
-**Comportamento**:
-- Se `message.getInstraction()` è uguale a `"ping"`, restituisce `CheckResponse("pong")`
-- Altrimenti restituisce `CheckResponse("")`
-
-**Esempio di utilizzo**:
+**Request Body**:
 ```json
-// Request
-POST /MasterMind/ping
 {
     "instraction": "ping"
 }
-
-// Response
-{
-    "checkResponse": "pong"
-}
 ```
 
-### 2. New Game Endpoint
+**Responses**:
+- **Successo**: `{"checkResponse": "pong"}`
+- **Fallimento**: `{"checkResponse": ""}`
+
+**Comportamento**:
+- Valida che l'istruzione sia esattamente `"ping"`
+- Restituisce risposta immediata senza effetti collaterali
+
+---
+
+### 2. Nuova Partita - `/newGame`
 
 ```java
 @PostMapping("/newGame")
-public CheckResponse createNewGame(@RequestBody Message message)
+public SystemResponse<Boolean> createNewGame(@RequestBody SystemRequest message)
 ```
 
-**Descrizione**: Crea una nuova partita del gioco MasterMind.
+**Descrizione**: Inizializza una nuova partita del MasterMind.
 
-**Parametri**:
-- `message`: Oggetto `Message` contenente l'istruzione
-
-**Comportamento**:
-- Se `message.getInstraction()` è uguale a `"newGame"`, crea una nuova istanza di `ObjectGame` e restituisce `CheckResponse(true)`
-- Altrimenti restituisce `CheckResponse(false)`
-
-**Esempio di utilizzo**:
+**Request Body**:
 ```json
-// Request
-POST /MasterMind/newGame
 {
     "instraction": "newGame"
 }
+```
 
-// Response
+**Responses**:
+- **Successo**: `{"checkResponse": true}`
+- **Fallimento**: `{"checkResponse": false}`
+
+**Operazioni Eseguite**:
+1. Valida l'istruzione `"newGame"`
+2. Chiama `game.newGame()` per inizializzare una nuova partita
+3. Resetta l'indice delle palline home tramite `playController.resetHomeBallIndex()`
+
+---
+
+### 3. Salvataggio Partita - `/saveGame`
+
+```java
+@PostMapping("/saveGame")
+public SystemResponse<Void> saveGame(@RequestBody SystemRequest message)
+```
+
+**Descrizione**: Salva lo stato corrente della partita su file.
+
+**Request Body**:
+```json
 {
-    "checkResponse": true
+    "instraction": "saveGame"
 }
 ```
 
-## Classi di Supporto
+**Responses**:
+- **Successo**: `{"success": true, "message": "Operazione completata con successo"}`
+- **Errore Salvataggio**: `{"success": false, "message": "Errore durante il salvataggio del gioco"}`
+- **Istruzione Non Valida**: `{"success": false, "message": "Istruzione non valida"}`
 
-### Message
-Classe per la deserializzazione delle richieste JSON.
+**File di Destinazione**: `game.dat` (configurabile tramite `filePath`)
 
-**Campi**:
-- `instraction`: String che indica il tipo di operazione richiesta
+---
 
-### CheckResponse
-Classe per la serializzazione delle risposte JSON.
+### 4. Caricamento Partita - `/loadGame`
 
-**Campi**:
-- `checkResponse`: Object che può contenere boolean o String come risposta
-
-## Configurazione
-
-### CORS
-Il controller è configurato per accettare richieste dal frontend React:
-- **Origine consentita**: `http://localhost:3000`
-- **Metodi**: POST (per entrambi gli endpoint)
-
-### Spring Boot
-Il controller utilizza l'injection di dipendenze di Spring per gestire l'istanza `ObjectGame`.
-
-## Note Tecniche
-
-1. **Thread Safety**: L'istanza `ObjectGame` è condivisa, potrebbe essere necessario considerare la sincronizzazione per applicazioni multi-utente
-
-2. **Gestione Errori**: Attualmente non è implementata una gestione esplicita degli errori
-
-3. **Validazione**: Non è presente validazione dei dati in input
-
-## Possibili Miglioramenti
-
-1. **Gestione delle Sessioni**: Implementare un sistema di sessioni per supportare multiple partite simultanee
-2. **Validation**: Aggiungere validazione sui parametri in input
-3. **Exception Handling**: Implementare un sistema di gestione centralizzata delle eccezioni
-4. **Logging**: Aggiungere logging per tracciare le operazioni
-5. **Security**: Implementare meccanismi di sicurezza se necessario
-
-## Dipendenze Maven
-
-Assicurarsi che il `pom.xml` includa:
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
+```java
+@PostMapping("/loadGame")
+public SystemResponse<Void> loadGame(@RequestBody SystemRequest message)
 ```
 
-Per il supporto CORS e le funzionalità REST.
+**Descrizione**: Carica una partita precedentemente salvata.
+
+**Request Body**:
+```json
+{
+    "instraction": "loadGame"
+}
+```
+
+**Responses**:
+- **Successo**: `{"success": true, "message": "Operazione completata con successo"}`
+- **Errore Caricamento**: `{"success": false, "message": "Errore durante il caricamento del gioco o file non trovato"}`
+- **Istruzione Non Valida**: `{"success": false, "message": "Istruzione non valida"}`
+
+**File Sorgente**: `game.dat` (configurabile tramite `filePath`)
+
+## Classi di Supporto
+
+### SystemRequest
+```java
+public class SystemRequest {
+    @JsonProperty("instraction")
+    private String instraction;  // Istruzione da eseguire
+}
+```
+
+**Utilizzo**: Classe DTO per la deserializzazione delle richieste client.
+
+### SystemResponse<T>
+```java
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SystemResponse<T> {
+    @JsonProperty("success")     private Boolean success;
+    @JsonProperty("message")     private String message;
+    @JsonProperty("data")        private T data;
+    @JsonProperty("checkResponse") private Object checkResponse;
+}
+```
+
+**Caratteristiche**:
+- **Type-safe**: Utilizzo di generics per la tipizzazione
+- **JSON ottimizzato**: Include solo campi non-null
+- **Compatibilità**: Supporta sia il formato legacy (`checkResponse`) che il nuovo formato (`success`/`message`)
+
+**Metodi Factory Disponibili**:
+- `SystemResponse.success()` - Operazione riuscita
+- `SystemResponse.error(String message)` - Operazione fallita
+- `SystemResponse.gameOperation(boolean result)` - Operazioni di gioco
+
+## Metodi di Utilità
+
+### `isValidInstruction(String instruction, String expected)`
+**Scopo**: Valida che l'istruzione ricevuta corrisponda a quella attesa.  
+**Parametri**:
+- `instruction`: Istruzione dal client
+- `expected`: Istruzione attesa
+
+**Return**: `boolean` - true se valida
+
+## Gestione degli Errori
+
+### Tipi di Errore
+1. **Istruzione Non Valida**: Quando `instraction` non corrisponde al valore atteso
+2. **Errore I/O**: Durante operazioni di salvataggio/caricamento file
+3. **Stato del Gioco**: Errori nella gestione dello stato interno
+
+### Pattern di Risposta
+- **Ping**: Utilizza `checkResponse` per compatibilità legacy
+- **Operazioni CRUD**: Utilizza pattern `success`/`message` per maggiore chiarezza
+
+## Best Practices Implementate
+
+### 1. **Separation of Concerns**
+- Controller gestisce solo HTTP/REST logic
+- Business logic delegata a `Game` e `PlayController`
+
+### 2. **Type Safety**
+- Utilizzo di generics per responses tipizzate
+- DTO specifici per request/response
+
+### 3. **Consistent API Design**
+- Pattern uniforme per validazione istruzioni
+- Gestione errori standardizzata
+
+### 4. **Documentation**
+- JavaDoc completa per tutti i metodi pubblici
+- Documentazione API dettagliata
