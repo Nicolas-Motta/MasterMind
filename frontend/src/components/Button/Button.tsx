@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, { useState } from "react"
 import "./Button.css"
 import { useNavigate } from "react-router-dom";
 
@@ -15,17 +15,29 @@ export default function Button({ children, onClick, id, className, disabled = fa
     const navigate = useNavigate();
 
     if (className === "quitButton") {
-        onClick = () => quitApp();
+        onClick = async () => await quitApp();
     }
 
     if (className === "mainMenuButton") {
-        onClick = () => mainMenu(navigate);
+        onClick = async () => {
+            setIsDisabled(true);
+            await mainMenu(navigate);
+            setIsDisabled(false);
+        };
     }
 
     if (className === "newGameButton") {
         onClick = async () => {
             setIsDisabled(true);
             await newGame(navigate);
+            setIsDisabled(false);
+        };
+    }
+
+    if (className === "continueGameButton") {
+        onClick = async () => {
+            setIsDisabled(true);
+            await continueGame(navigate);
             setIsDisabled(false);
         };
     }
@@ -37,28 +49,59 @@ export default function Button({ children, onClick, id, className, disabled = fa
     )
 }
 
-function quitApp() {
+async function quitApp() {
     try {
-        // Controlla se siamo in ambiente Electron
+        const saveResponse = await fetch('/MasterMind/saveGame', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ instraction: 'saveGame' })
+        });
+
+        // Aspetta solo la risposta, poi chiude immediatamente
+        await saveResponse.json();
+
+        // Chiusura immediata
         if (window.require) {
             const { ipcRenderer } = window.require('electron');
             ipcRenderer.send('quit-app');
         } else {
-            // Fallback per browser web (chiude la tab/finestra)
             window.close();
         }
     } catch (error) {
-        console.error('Errore durante la chiusura dell\'app:', error);
-        // Fallback finale
-        window.close();
+        // In caso di errore, chiude comunque
+        if (window.require) {
+            const { ipcRenderer } = window.require('electron');
+            ipcRenderer.send('quit-app');
+        } else {
+            window.close();
+        }
     }
 }
 
-function mainMenu(navigate: ReturnType<typeof useNavigate>) {
-    navigate("/lobby");
+async function mainMenu(navigate: ReturnType<typeof useNavigate>) {
+    try {
+        const saveResponse = await fetch('/MasterMind/saveGame', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ instraction: 'saveGame' })
+        });
+
+        // Aspetta la risposta del salvataggio
+        await saveResponse.json();
+
+        // Naviga al lobby dopo il salvataggio
+        navigate("/lobby");
+    } catch (error) {
+        // In caso di errore nel salvataggio, naviga comunque al lobby
+        navigate("/lobby");
+    }
 }
 
-async function newGame(navigate: ReturnType<typeof useNavigate>) {    
+async function newGame(navigate: ReturnType<typeof useNavigate>) {
     try {
         const response = await fetch("/MasterMind/newGame", {
             method: "POST",
@@ -79,5 +122,34 @@ async function newGame(navigate: ReturnType<typeof useNavigate>) {
         }
     } catch (error) {
         alert("Errore di connessione. Riprova più tardi.");
+    }
+}
+
+async function continueGame(navigate: ReturnType<typeof useNavigate>) {
+    try {
+        const response = await fetch('http://localhost:8080/MasterMind/loadGame', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ instraction: 'loadGame' })
+        });
+
+        if (!response.ok) throw new Error("Errore nella richiesta di caricamento");
+
+        const data = await response.json();
+
+        if (data.success === true) {
+            // Gioco caricato con successo, naviga alla schermata di gioco
+            navigate("/game", { state: { timestamp: Date.now(), loaded: true } });
+        } else {
+            // Fallback: se non c'è un salvataggio, crea una nuova partita
+            alert("Nessun salvataggio trovato. Verrà creata una nuova partita.");
+            await newGame(navigate);
+        }
+    } catch (error) {
+        // In caso di errore di connessione, crea una nuova partita
+        alert("Errore di connessione. Verrà creata una nuova partita.");
+        await newGame(navigate);
     }
 }
