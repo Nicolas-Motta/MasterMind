@@ -243,6 +243,7 @@ export default function Label({ id }: LabelProps) {
                             id={composition[index]!.id}
                             color={composition[index]!.color as ColorType}
                             position={(composition[index]!.position || id) as Position}
+                            isDraggable={isCurrentLabel()}
                         />
                     ) : null}
                 </div>

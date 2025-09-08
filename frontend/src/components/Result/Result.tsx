@@ -76,6 +76,7 @@ export default function Result() {
                             id={composition[index]!.id}
                             color={composition[index]!.color as ColorType}
                             position={(composition[index]!.position) as Position}
+                            isDraggable={false}
                         />
                     ) : null}
                 </div>

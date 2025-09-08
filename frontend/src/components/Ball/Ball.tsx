@@ -8,9 +8,10 @@ export interface BallProps {
     id: string;
     color: ColorType;
     position: Position;
+    isDraggable?: boolean;
 }
 
-export default function Ball({ id, color, position }: BallProps) {
+export default function Ball({ id, color, position, isDraggable = true }: BallProps) {
     const ref = useRef<HTMLDivElement>(null);
     const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
     const [originalPosition] = useState({ x: 0, y: 0 });
@@ -20,6 +21,8 @@ export default function Ball({ id, color, position }: BallProps) {
     const { setX, setY, setBall } = usePositionContext();
 
     const onPointerDown = (e: React.PointerEvent) => {
+        if (!isDraggable) return; // Prevent dragging if disabled
+        
         const px = e.clientX;
         const py = e.clientY;
         
@@ -85,7 +88,7 @@ export default function Ball({ id, color, position }: BallProps) {
 
     const ballStyle = {
         transform: `translate(${coordinates.x}px, ${coordinates.y}px)`,
-        cursor: isDragging ? 'grabbing' : 'grab',
+        cursor: !isDraggable ? 'default' : (isDragging ? 'grabbing' : 'grab'),
         '--ball-color': getColorStyle(ballInfo.color)
     } as React.CSSProperties & { '--ball-color': string };
 
