@@ -2,6 +2,7 @@ import {app, BrowserWindow, ipcMain} from 'electron';
 import { exec } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fetch from 'node-fetch';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +27,7 @@ app.whenReady().then(createWindow);
 
 // Handler per chiudere l'app dal frontend
 ipcMain.on('quit-app', () => {
-    killAllProcesses();
+    saveAndQuit();
 });
 
 app.on('activate', () => {
@@ -35,8 +36,24 @@ app.on('activate', () => {
   }
 });
 
-// Funzione per terminare tutti i processi Java e Spring Boot
-function killAllProcesses() {
+// Funzione per salvare il gioco e terminare tutti i processi
+async function saveAndQuit() {
+    try {
+        // Tenta di salvare il gioco prima di chiudere
+        const response = await fetch('http://localhost:8080/MasterMind/saveGame', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ instraction: 'saveGame' })
+        });
+        
+        // Aspetta la risposta del salvataggio
+        await response.json();
+        console.log('Gioco salvato con successo prima della chiusura');
+    } catch (error) {
+        console.log('Errore nel salvataggio durante la chiusura:', error.message);
+    }
     
     // Windows: termina tutti i processi Java
     exec('taskkill /F /IM java.exe', (error) => {
@@ -78,5 +95,5 @@ function killAllProcesses() {
 }
 
 app.on('window-all-closed', () => {
-    killAllProcesses();
+    saveAndQuit();
 });

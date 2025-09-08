@@ -15,7 +15,7 @@ export default function Button({ children, onClick, id, className, disabled = fa
     const navigate = useNavigate();
 
     if (className === "quitButton") {
-        onClick = async () => await quitApp();
+        onClick = () => quitApp();
     }
 
     if (className === "mainMenuButton") {
@@ -50,34 +50,12 @@ export default function Button({ children, onClick, id, className, disabled = fa
 }
 
 async function quitApp() {
-    try {
-        const saveResponse = await fetch('/MasterMind/saveGame', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ instraction: 'saveGame' })
-        });
-
-        // Aspetta solo la risposta, poi chiude immediatamente
-        await saveResponse.json();
-
-        // Chiusura immediata
         if (window.require) {
             const { ipcRenderer } = window.require('electron');
             ipcRenderer.send('quit-app');
         } else {
             window.close();
         }
-    } catch (error) {
-        // In caso di errore, chiude comunque
-        if (window.require) {
-            const { ipcRenderer } = window.require('electron');
-            ipcRenderer.send('quit-app');
-        } else {
-            window.close();
-        }
-    }
 }
 
 async function mainMenu(navigate: ReturnType<typeof useNavigate>) {
