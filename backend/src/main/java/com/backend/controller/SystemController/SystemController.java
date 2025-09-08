@@ -12,7 +12,7 @@ import com.backend.controller.SystemController.Response.LoadGameResponse;
 
 @RestController
 @RequestMapping("/MasterMind")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class SystemController {
 
     @Autowired

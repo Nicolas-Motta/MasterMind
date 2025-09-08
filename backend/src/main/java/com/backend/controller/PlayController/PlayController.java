@@ -20,7 +20,7 @@ import com.backend.controller.PlayController.Response.SetLabelResponse;
 
 @RestController
 @RequestMapping("/MasterMind")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class PlayController {
     
     @Autowired

@@ -19,6 +19,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(variablesWebSocketHandler, "/MasterMind/Variables")
-                .setAllowedOrigins("http://localhost:3000"); // Permette connessioni dal frontend
+                .setAllowedOrigins("*"); // Permette connessioni da qualsiasi origine
     }
 }
