@@ -55,9 +55,13 @@
     position: absolute;
     left: 48%;
 
-    height: 100vh;
+    height: 100vh ;
+    box-sizing: border-box;
 
     background-color: #23232b;
     display: grid;
     grid-template-rows: repeat(6, 1fr) 2fr;
+
+    padding: 0px 2vh;
+    padding-top: 1.5vh;
 }
