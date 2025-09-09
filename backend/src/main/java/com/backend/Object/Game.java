@@ -336,7 +336,7 @@ public class Game implements Serializable {
             case LABEL4:
                 return Position.LABEL5;
             case LABEL5:
-                return null; // Gioco finito
+                return Position.RESULT; // Gioco finito
             default:
                 return Position.LABEL0;
         }
