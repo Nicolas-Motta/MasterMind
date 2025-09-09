@@ -67,7 +67,7 @@ export default function Result() {
 
 
     return (
-        <div className="result">
+        <div className={`result ${isWin ? 'win' : ''}`}>
 
             {Array.from({ length: 4 }, (_, index) => (
                 <div className="dropZone" key={index}>

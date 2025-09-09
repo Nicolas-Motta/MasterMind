@@ -89,7 +89,7 @@ export default function Ball({ id, color, position, isDraggable = true }: BallPr
     const ballStyle = {
         transform: `translate(${coordinates.x}px, ${coordinates.y}px)`,
         cursor: !isDraggable ? 'default' : (isDragging ? 'grabbing' : 'grab'),
-        '--ball-color': getColorStyle(ballInfo.color)
+        '--ball-color': getColorStyle(color)
     } as React.CSSProperties & { '--ball-color': string };
 
     return (
