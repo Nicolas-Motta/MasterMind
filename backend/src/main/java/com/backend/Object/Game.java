@@ -21,6 +21,7 @@ public class Game implements Serializable {
     private Position currentLabel;
     private Ball[] result;
     private boolean isWin;
+    private boolean isLoss;
 
     @Autowired
     private VariableWatcher variableWatcher;
@@ -104,6 +105,15 @@ public class Game implements Serializable {
         return isWin;
     }
 
+    /**
+     * Verifica se il gioco è stato perso.
+     * 
+     * @return true se il gioco è stato perso, false altrimenti
+     */
+    public boolean getIsLoss() {
+        return isLoss;
+    }
+
     // ----------------------------------- SETTERS
     // ---------------------------------//
 
@@ -171,6 +181,22 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Imposta se il gioco è stato perso.
+     * Notifica il cambiamento tramite VariableWatcher se disponibile.
+     * 
+     * @param isLoss true se il gioco è stato perso, false altrimenti
+     */
+    public void setIsLoss(boolean isLoss) {
+        boolean oldIsLoss = this.isLoss;
+        this.isLoss = isLoss;
+
+        // Notifica il cambiamento solo se il nuovo valore è diverso dal precedente
+        if (variableWatcher != null && isLoss != oldIsLoss) {
+            variableWatcher.notifyIsLoss(isLoss);
+        }
+    }
+
     // -------------------------------- SERIALIZABLE
     // ---------------------------------//
 
@@ -188,7 +214,7 @@ public class Game implements Serializable {
             // serializzabile
             GameData gameData = new GameData(
                     this.based, this.labels, this.result,
-                    this.status, this.currentLabel, this.isWin);
+                    this.status, this.currentLabel, this.isWin, this.isLoss);
 
             out.writeObject(gameData);
             return true;
@@ -216,6 +242,7 @@ public class Game implements Serializable {
             setStatus(gameData.getStatus());
             setCurrentLabel(gameData.getCurrentLabel());
             setIsWin(gameData.getIsWin());
+            setIsLoss(gameData.getIsLoss());
 
             return true;
         } catch (IOException | ClassNotFoundException e) {
@@ -236,15 +263,17 @@ public class Game implements Serializable {
         private final Status status;
         private final Position currentLabel;
         private final boolean isWin;
+        private final boolean isLoss;
 
         public GameData(Ball[] based, Ball[][] labels, Ball[] result,
-                Status status, Position currentLabel, boolean isWin) {
+                Status status, Position currentLabel, boolean isWin, boolean isLoss) {
             this.based = based;
             this.labels = labels;
             this.result = result;
             this.status = status;
             this.currentLabel = currentLabel;
             this.isWin = isWin;
+            this.isLoss = isLoss;
         }
 
         // Getters
@@ -271,6 +300,10 @@ public class Game implements Serializable {
         public boolean getIsWin() {
             return isWin;
         }
+
+        public boolean getIsLoss() {
+            return isLoss;
+        }
     }
 
     // ----------------------------------- CUSTOMS
@@ -284,6 +317,7 @@ public class Game implements Serializable {
     public void newGame() {
         setStatus(Status.GENERATING);
         setIsWin(false);
+        setIsLoss(false);
         based = new Ball[] {
                 new Ball(Color.RED, Position.HOME),
                 new Ball(Color.BLUE, Position.HOME),

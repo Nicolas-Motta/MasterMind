@@ -60,4 +60,8 @@ public class VariableWatcher {
     public void notifyIsWin(Object newValue) {
         notifyChange("isWin", newValue);
     }
+
+    public void notifyIsLoss(Object newValue) {
+        notifyChange("isLoss", newValue);
+    }
 }

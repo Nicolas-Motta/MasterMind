@@ -163,9 +163,10 @@ public class PlayController {
             if (redPins != 4) {
                 Position currentLabel = game.getCurrentLabel();
                 Position nextLabel = game.getNextLabel(currentLabel);
-                if (nextLabel != null) {
+                if (nextLabel != Position.RESULT) {
                     game.setCurrentLabel(nextLabel);
                 } else {
+                    game.setIsLoss(true);
                     game.setStatus(Status.FINISHED);
                 }
             } else {
