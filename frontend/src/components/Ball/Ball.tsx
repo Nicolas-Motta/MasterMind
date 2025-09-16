@@ -17,7 +17,7 @@ export default function Ball({ id, color, position, isDraggable = true }: BallPr
     const [originalPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-    const [ballInfo, setBallInfo] = useState<{ id: string; color: ColorType; position: Position }>({ id, color, position });
+    const ballInfo = { id, color, position };
     const { setX, setY, setBall } = usePositionContext();
 
     const onPointerDown = (e: React.PointerEvent) => {
