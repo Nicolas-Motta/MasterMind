@@ -12,7 +12,7 @@
     margin-right: 2vw;
 }
 
-.result:not(.win) > :nth-child(-n+4) {
+.result:not(.win, .loss) > :nth-child(-n+4) {
     filter: blur(4vh);
 }
 

@@ -28,10 +28,11 @@ export default function Result() {
     const [composition, setComposition] = useState<(BallData)[]>(
         Array(4).fill(errorBall)
     );
-    const { isWin } = useWebSocket();
+    const { isWin, isLoss } = useWebSocket();
 
     useEffect(() => {
-        if (!isWin) {
+        console.log("isWin or isLoss changed:", { isWin, isLoss });
+        if (!isWin && !isLoss) {
             return;
         }
 
@@ -62,13 +63,12 @@ export default function Result() {
         };
 
         fetchResult();
-    }, [isWin]);
+    }, [isWin, isLoss]);
 
 
 
     return (
-        <div className={`result ${isWin ? 'win' : ''}`}>
-
+        <div className={`result ${isWin ? 'win' : isLoss ? 'loss' : ''}`}>
             {Array.from({ length: 4 }, (_, index) => (
                 <div className="dropZone" key={index}>
                     {composition && composition[index] && composition[index] !== null ? (
@@ -82,10 +82,9 @@ export default function Result() {
                 </div>
             ))}
             <div className="gap"></div>
-            <p className={`victory-message ${isWin ? 'win' : ''}`}>
-                {isWin === true ? "WIN!" : "RESULT"}
+            <p className={`victory-message ${isWin ? 'win' : isLoss ? 'loss' : ''}`}>
+                {isWin === true ? "WIN!" : isLoss === true ? "LOSS!" : "RESULT"}
             </p>
-
         </div>
     );
 }

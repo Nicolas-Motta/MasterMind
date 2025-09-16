@@ -5,6 +5,7 @@ import { type Position } from '../Types/Position';
 interface WebSocketContextType {
     currentLabel: Position | null;
     isWin: boolean | null;
+    isLoss: boolean | null;
     isConnected: boolean;
     sendMessage: (message: any) => void;
 }
@@ -26,6 +27,7 @@ interface WebSocketProviderProps {
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
     const [currentLabel, setCurrentLabel] = useState<Position | null>(null);
     const [isWin, setIsWin] = useState<boolean | null>(null);
+    const [isLoss, setIsLoss] = useState<boolean | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const wsRef = useRef<WebSocket | null>(null);
 
@@ -41,11 +43,12 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
             ws.onmessage = (event) => {
                 try {
                     const update = JSON.parse(event.data);
-                    
                     if (update.variableName === 'currentLabel') {
                         setCurrentLabel(update.currentValue as Position);
                     } else if (update.variableName === 'isWin') {
                         setIsWin(update.currentValue as boolean);
+                    } else if (update.variableName === 'isLoss') {
+                        setIsLoss(update.currentValue as boolean);
                     }
                 } catch (error) {
                 }
@@ -65,30 +68,35 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
             };
         };
 
-        // Fetch iniziale del currentLabel e isWin
+        // Fetch iniziale del currentLabel, isWin e isLoss
         const fetchInitialCurrentLabel = async () => {
             try {
                 const response = await fetch('/MasterMind/Variables/currentLabel');
                 const data = await response.json();
-                console.log('Initial currentLabel:', data);
                 setCurrentLabel(data.value as Position);
-            } catch (error) {
-            }
+            } catch (error) {}
         };
 
         const fetchInitialIsWin = async () => {
             try {
                 const response = await fetch('/MasterMind/Variables/isWin');
                 const data = await response.json();
-                console.log('Initial isWin:', data);
                 setIsWin(data.value as boolean);
-            } catch (error) {
-            }
+            } catch (error) {}
+        };
+
+        const fetchInitialIsLoss = async () => {
+            try {
+                const response = await fetch('/MasterMind/Variables/isLoss');
+                const data = await response.json();
+                setIsLoss(data.value as boolean);
+            } catch (error) {}
         };
 
         connectWebSocket();
         fetchInitialCurrentLabel();
         fetchInitialIsWin();
+        fetchInitialIsLoss();
         
         return () => {
             if (wsRef.current) {
@@ -107,7 +115,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     };
 
     return (
-        <WebSocketContext.Provider value={{ currentLabel, isWin, isConnected, sendMessage }}>
+    <WebSocketContext.Provider value={{ currentLabel, isWin, isLoss, isConnected, sendMessage }}>
             {children}
         </WebSocketContext.Provider>
     );
