@@ -33,7 +33,8 @@ public class Game implements Serializable {
         setStatus(Status.LOBBY);
     }
 
-    // ----------------------------------- GETTERS --------------------------------//
+    // ----------------------------------- GETTERS
+    // --------------------------------//
 
     /**
      * Restituisce lo status corrente del gioco.
@@ -103,7 +104,8 @@ public class Game implements Serializable {
         return isWin;
     }
 
-    // ----------------------------------- SETTERS ---------------------------------//
+    // ----------------------------------- SETTERS
+    // ---------------------------------//
 
     /**
      * Imposta lo status del gioco.
@@ -127,7 +129,7 @@ public class Game implements Serializable {
      * Imposta una specifica etichetta del gioco.
      * Cambia automaticamente lo status da GENERATING a PLAYING.
      * 
-     * @param n l'indice dell'etichetta da impostare
+     * @param n     l'indice dell'etichetta da impostare
      * @param label l'array di Ball da assegnare all'etichetta
      */
     public void setLabel(int n, Ball[] label) {
@@ -153,7 +155,6 @@ public class Game implements Serializable {
         }
     }
 
-
     /**
      * Imposta se il gioco è stato vinto.
      * Notifica il cambiamento tramite VariableWatcher se disponibile.
@@ -170,7 +171,8 @@ public class Game implements Serializable {
         }
     }
 
-    // -------------------------------- SERIALIZABLE ---------------------------------//
+    // -------------------------------- SERIALIZABLE
+    // ---------------------------------//
 
     /**
      * Serializza l'istanza corrente del gioco in un file
@@ -271,7 +273,8 @@ public class Game implements Serializable {
         }
     }
 
-    // ----------------------------------- CUSTOMS --------------------------------//
+    // ----------------------------------- CUSTOMS
+    // --------------------------------//
 
     /**
      * Inizializza una nuova partita.
@@ -293,13 +296,9 @@ public class Game implements Serializable {
         for (int i = 0; i < labels.length; i++) {
             labels[i] = new Ball[4];
         }
-        result = new Ball[] {
-                new Ball(getRandomColor(), Position.RESULT),
-                new Ball(getRandomColor(), Position.RESULT),
-                new Ball(getRandomColor(), Position.RESULT),
-                new Ball(getRandomColor(), Position.RESULT),
-        };
-
+        result = generateResult();
+        for (Ball ball : result)
+            System.out.println(ball.getColor());
         setStatus(Status.PLAYING);
         setCurrentLabel(Position.LABEL0);
         saveGameState("game.dat");
@@ -311,10 +310,33 @@ public class Game implements Serializable {
      * 
      * @return un colore casuale valido per il gioco
      */
+    @Deprecated
     public Color getRandomColor() {
         Random random = new Random();
         Color[] colors = Color.values();
         return colors[random.nextInt(colors.length - 1)]; // Esclude Color.ERROR
+    }
+
+    /**
+     * Genera una sequenza di 4 palline con colori tutti diversi.
+     * 
+     * @return array di 4 Ball con colori diversi
+     */
+    public Ball[] generateResult() {
+        Color[] colors = Color.values();
+        // Escludi Color.ERROR se presente
+        int validColors = colors.length - 1;
+        if (validColors < 4)
+            throw new RuntimeException("Non ci sono abbastanza colori diversi!");
+        java.util.List<Integer> indices = new java.util.ArrayList<>();
+        for (int i = 0; i < validColors; i++)
+            indices.add(i);
+        java.util.Collections.shuffle(indices);
+        Ball[] balls = new Ball[4];
+        for (int i = 0; i < 4; i++) {
+            balls[i] = new Ball(colors[indices.get(i)], Position.RESULT);
+        }
+        return balls;
     }
 
     /**

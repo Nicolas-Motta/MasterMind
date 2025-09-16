@@ -102,6 +102,16 @@ export default function Label({ id }: LabelProps) {
                     newComposition[existingBallIndex] = null;
                 }
 
+                // Rimuovi qualsiasi pallina dello stesso colore
+                if (ball) {
+                    for (let i = 0; i < newComposition.length; i++) {
+                        const currentBall = newComposition[i];
+                        if (currentBall !== null && currentBall.color === ball.color) {
+                            newComposition[i] = null;
+                        }
+                    }
+                }
+
                 // Genera un nuovo ID univoco per permettere multiple palline dello stesso colore
                 // Manteniamo il formato originale ma aggiungiamo un timestamp per unicità
                 const timestamp = Date.now().toString().slice(-4); // Ultimi 4 cifre del timestamp
