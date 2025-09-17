@@ -122,7 +122,6 @@ async function continueGame(navigate: ReturnType<typeof useNavigate>) {
             navigate("/game", { state: { timestamp: Date.now(), loaded: true } });
         } else {
             // Fallback: se non c'è un salvataggio, crea una nuova partita
-            alert("Nessun salvataggio trovato. Verrà creata una nuova partita.");
             await newGame(navigate);
         }
     } catch (error) {
