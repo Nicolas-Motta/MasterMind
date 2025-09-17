@@ -9,9 +9,9 @@ const __dirname = path.dirname(__filename);
 
 function createWindow() {
     const win = new BrowserWindow({
-        width: 800,
+        width: 850,
         height: 600,
-        minWidth: 800,
+        minWidth: 850,
         minHeight: 600,
         icon: path.join(__dirname, 'frontend', 'src', 'assets', 'Images', 'logo.png'),
         webPreferences: {
