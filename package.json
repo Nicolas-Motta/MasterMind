@@ -1,6 +1,6 @@
 {
   "name": "masterMind",
-  "version": "0.8.0 beta",
+  "version": "0.8.1 beta",
   "type": "module",
   "main": "config.js",
   "scripts": {
@@ -10,9 +10,9 @@
     "project": "concurrently \"npm run react\" \"npm run electron\""
   },
   "keywords": [],
-  "author": "",
+  "author": "Nicolas Motta",
   "license": "ISC",
-  "description": "",
+  "description": "This is a MasterMind game",
   "devDependencies": {
     "concurrently": "^8.2.2",
     "electron": "^37.1.0",
