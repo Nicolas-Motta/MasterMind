@@ -1,6 +1,7 @@
 {
   "name": "masterMind",
   "version": "0.8.0 beta",
+  "type": "module",
   "main": "config.js",
   "scripts": {
     "java": "cd ./backend && mvnw.cmd spring-boot:run",
