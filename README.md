@@ -1,8 +1,6 @@
-# 🎯 MasterMind v2
+# 🎯 MasterMind
 
 ![MasterMind Logo](./icon.png)
-
-**Una moderna implementazione del classico gioco MasterMind con interfaccia desktop ed architettura full-stack**
 
 ## 📋 Indice
 
@@ -21,7 +19,7 @@
 
 ## 📖 Descrizione
 
-MasterMind v2 è una versione moderna e completa del classico gioco di logica MasterMind. L'applicazione combina un backend Spring Boot robusto con un frontend React elegante, il tutto impacchettato in un'applicazione desktop Electron per un'esperienza utente ottimale.
+MasterMind è una versione moderna e completa del classico gioco di logica MasterMind. L'applicazione combina un backend Spring Boot robusto con un frontend React elegante, il tutto impacchettato in un'applicazione desktop Electron per un'esperienza utente ottimale.
 
 ### 🎯 Obiettivo del Gioco
 
