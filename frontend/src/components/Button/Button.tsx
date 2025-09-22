@@ -105,7 +105,7 @@ async function newGame(navigate: ReturnType<typeof useNavigate>) {
 
 async function continueGame(navigate: ReturnType<typeof useNavigate>) {
     try {
-        const response = await fetch('http://localhost:8080/MasterMind/loadGame', {
+        const response = await fetch('/MasterMind/loadGame', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
