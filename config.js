@@ -7,6 +7,14 @@ import fetch from 'node-fetch';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+let backendPid = null;
+
+// Ricevi il PID del processo backend dal preload
+ipcMain.on('backend-process-pid', (event, pid) => {
+    backendPid = pid;
+    console.log(`Backend PID ricevuto: ${pid}`);
+});
+
 function createWindow() {
     const win = new BrowserWindow({
         width: 850,
@@ -63,10 +71,9 @@ app.on('activate', () => {
     }
 });
 
-// Funzione per salvare il gioco e terminare tutti i processi
+// Funzione per salvare e chiudere l'app
 async function saveAndQuit() {
     try {
-        // Tenta di salvare il gioco prima di chiudere
         const response = await fetch('http://localhost:8080/MasterMind/saveGame', {
             method: 'POST',
             headers: {
@@ -75,30 +82,30 @@ async function saveAndQuit() {
             body: JSON.stringify({ instraction: 'saveGame' })
         });
 
-        // Aspetta la risposta del salvataggio
         await response.json();
-        console.log('Gioco salvato con successo prima della chiusura');
     } catch (error) {
         console.log('Errore nel salvataggio durante la chiusura:', error.message);
     }
 
-    // Windows: termina tutti i processi Java
+    // Termina il processo backend direttamente se disponibile
+    if (backendPid) {
+        exec(`taskkill /F /PID ${backendPid}`, (error) => {
+            if (error) {
+                console.log('Errore terminando processo backend diretto, usando fallback');
+            }
+        });
+        
+        // Termina anche eventuali processi figlio
+        exec(`taskkill /F /T /PID ${backendPid}`, (error) => {
+            if (error) console.log('Nessun processo figlio da terminare');
+        });
+    } else {
+        console.log('PID backend non disponibile, usando metodi fallback');
+    }
+
+    // Fallback: termina tutti i processi Java (metodo precedente)
     exec('taskkill /F /IM java.exe', (error) => {
         if (error) console.log('Nessun processo Java da terminare');
-    });
-
-    // Termina processi Spring Boot sulla porta 8080
-    exec('netstat -ano | findstr :8080', (error, stdout) => {
-        if (!error && stdout) {
-            const lines = stdout.split('\n');
-            lines.forEach(line => {
-                const parts = line.trim().split(/\s+/);
-                const pid = parts[parts.length - 1];
-                if (pid && pid !== '0') {
-                    exec(`taskkill /F /PID ${pid}`, () => { });
-                }
-            });
-        }
     });
 
     // Termina processi Node.js sulla porta 3000
