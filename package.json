@@ -16,7 +16,7 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "electron": "^37.1.0",
-    "electron-builder": "^26.0.12"
+    "electron-packager": "^17.1.2"
   },
   "dependencies": {
     "node-fetch": "^3.3.2"
