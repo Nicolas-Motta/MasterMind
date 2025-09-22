@@ -7,7 +7,7 @@
     "java": "cd ./backend && mvnw.cmd spring-boot:run",
     "react": "cd ./frontend && npm run dev",
     "electron": "electron .",
-    "project": "concurrently \"npm run java\" \"npm run react\" \"npm run electron\""
+    "project": "concurrently \"npm run react\" \"npm run electron\""
   },
   "keywords": [],
   "author": "",

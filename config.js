@@ -17,6 +17,7 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            preload: path.join(__dirname, 'preload.js')
         }
     })
 
@@ -61,6 +62,7 @@ app.on('activate', () => {
         tray.setContextMenu(trayMenu);
     }
 });
+
 // Funzione per salvare il gioco e terminare tutti i processi
 async function saveAndQuit() {
     try {
