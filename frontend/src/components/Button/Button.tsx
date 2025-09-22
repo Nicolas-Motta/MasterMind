@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import "./Button.css"
 import { useNavigate } from "react-router-dom";
+import { config } from "../../config";
 
 type ButtonProps = {
     children: React.ReactNode
@@ -60,7 +61,7 @@ async function quitApp() {
 
 async function mainMenu(navigate: ReturnType<typeof useNavigate>) {
     try {
-        const saveResponse = await fetch('/MasterMind/saveGame', {
+        const saveResponse = await fetch(`${config.baseURL}/MasterMind/saveGame`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -81,7 +82,7 @@ async function mainMenu(navigate: ReturnType<typeof useNavigate>) {
 
 async function newGame(navigate: ReturnType<typeof useNavigate>) {
     try {
-        const response = await fetch("/MasterMind/newGame", {
+        const response = await fetch(`${config.baseURL}/MasterMind/newGame`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -105,7 +106,7 @@ async function newGame(navigate: ReturnType<typeof useNavigate>) {
 
 async function continueGame(navigate: ReturnType<typeof useNavigate>) {
     try {
-        const response = await fetch('/MasterMind/loadGame', {
+        const response = await fetch(`${config.baseURL}/MasterMind/loadGame`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

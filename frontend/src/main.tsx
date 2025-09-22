@@ -1,6 +1,6 @@
 import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { HashRouter, Route, Routes, useLocation } from 'react-router-dom'
 import './main.css'
 import { PositionProvider } from './contexts/PositionContext';
 import { WebSocketProvider } from './contexts/TransfertContext';
@@ -19,7 +19,7 @@ function GameReRender() {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <Suspense>
         <WebSocketProvider>
           <Routes>
@@ -33,6 +33,6 @@ createRoot(document.getElementById('root')!).render(
           </Routes>
         </WebSocketProvider>
       </Suspense>
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>,
 )

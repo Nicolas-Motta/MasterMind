@@ -6,6 +6,7 @@ import { type Position } from "../../Types/Position";
 import { type Color as ColorType } from "../../Types/Color";
 import "./Label.css"
 import Button from "../Button/Button";
+import { config } from "../../config";
 
 interface LabelRequest {
     instructions: string;
@@ -161,7 +162,7 @@ export default function Label({ id }: LabelProps) {
                 composition: processedComposition
             };
 
-            const response = await fetch('/MasterMind/setLabel', {
+            const response = await fetch(`${config.baseURL}/MasterMind/setLabel`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -190,7 +191,7 @@ export default function Label({ id }: LabelProps) {
                 composition: compositionData
             };
 
-            const response = await fetch('/MasterMind/calculatePins', {
+            const response = await fetch(`${config.baseURL}/MasterMind/calculatePins`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -225,7 +226,7 @@ export default function Label({ id }: LabelProps) {
                 composition: composition
             };
 
-            const response = await fetch('/MasterMind/sendResponse', {
+            const response = await fetch(`${config.baseURL}/MasterMind/sendResponse`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -258,7 +259,7 @@ export default function Label({ id }: LabelProps) {
             };
 
             try {
-                const response = await fetch('/MasterMind/getLabel', {
+                const response = await fetch(`${config.baseURL}/MasterMind/getLabel`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

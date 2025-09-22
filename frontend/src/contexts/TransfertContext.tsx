@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { type Position } from '../Types/Position';
+import { config } from '../config';
 
 interface WebSocketContextType {
     currentLabel: Position | null;
@@ -33,7 +34,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
     useEffect(() => {
         const connectWebSocket = () => {
-            const ws = new WebSocket(`/MasterMind/Variables`);
+            const ws = new WebSocket(`${config.wsURL}/MasterMind/Variables`);
             wsRef.current = ws;
             
             ws.onopen = () => {
@@ -71,7 +72,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
         // Fetch iniziale del currentLabel, isWin e isLoss
         const fetchInitialCurrentLabel = async () => {
             try {
-                const response = await fetch('/MasterMind/Variables/currentLabel');
+                const response = await fetch(`${config.baseURL}/MasterMind/Variables/currentLabel`);
                 const data = await response.json();
                 setCurrentLabel(data.value as Position);
             } catch (error) {}
@@ -79,7 +80,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
         const fetchInitialIsWin = async () => {
             try {
-                const response = await fetch('/MasterMind/Variables/isWin');
+                const response = await fetch(`${config.baseURL}/MasterMind/Variables/isWin`);
                 const data = await response.json();
                 setIsWin(data.value as boolean);
             } catch (error) {}
@@ -87,7 +88,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
         const fetchInitialIsLoss = async () => {
             try {
-                const response = await fetch('/MasterMind/Variables/isLoss');
+                const response = await fetch(`${config.baseURL}/MasterMind/Variables/isLoss`);
                 const data = await response.json();
                 setIsLoss(data.value as boolean);
             } catch (error) {}

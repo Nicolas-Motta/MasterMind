@@ -4,6 +4,7 @@ import { type Position } from "../../Types/Position";
 import { type Color as ColorType } from "../../Types/Color";
 import { useWebSocket } from "../../contexts/TransfertContext";
 import "./Result.css"
+import { config } from "../../config";
 
 interface BallData {
     id: string;
@@ -42,7 +43,7 @@ export default function Result() {
             };
 
             try {
-                const response = await fetch('http://localhost:8080/MasterMind/getResult', {
+                const response = await fetch(`${config.baseURL}/MasterMind/getResult`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

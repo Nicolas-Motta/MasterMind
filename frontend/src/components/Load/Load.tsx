@@ -4,7 +4,8 @@ import "./Load.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImage from "../../assets/Images/logo.png";
-import { useWebSocket } from "../../contexts/TransfertContext"; 
+import { useWebSocket } from "../../contexts/TransfertContext";
+import { config } from "../../config";
 
 export default function Load() {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ export default function Load() {
         const ping = async () => {
             if (!active) return;
             try {
-                const response = await fetch("/MasterMind/ping", {
+                const response = await fetch(`${config.baseURL}/MasterMind/ping`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

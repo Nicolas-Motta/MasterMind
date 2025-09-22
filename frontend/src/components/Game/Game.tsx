@@ -9,6 +9,7 @@ import { type Color as ColorType } from "../../Types/Color";
 import { type Position } from "../../Types/Position";
 import { usePositionContext } from "../../contexts/PositionContext";
 import "./Game.css"
+import { config } from "../../config";
 
 interface BallData {
   id: string;
@@ -36,7 +37,7 @@ export default function Game() {
           instraction: "getBaseBall"
         };
 
-      const response = await fetch('/MasterMind/getBaseBall', {
+      const response = await fetch(`${config.baseURL}/MasterMind/getBaseBall`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
