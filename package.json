@@ -7,7 +7,7 @@
     "java": "cd ./backend && mvnw.cmd spring-boot:run",
     "react": "cd ./frontend && npm run dev",
     "electron": "electron .",
-    "project": "concurrently \"npm run react\" \"npm run electron\""
+    "build": "node ./packager.config.js"
   },
   "keywords": [],
   "author": "Nicolas Motta",
@@ -16,7 +16,8 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "electron": "^37.1.0",
-    "electron-packager": "^17.1.2"
+    "electron-packager": "^17.1.2",
+    "fs-extra": "^11.3.2"
   },
   "dependencies": {
     "node-fetch": "^3.3.2"
