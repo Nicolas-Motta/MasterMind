@@ -6,9 +6,9 @@ import { PositionProvider } from './contexts/PositionContext';
 import { WebSocketProvider } from './contexts/TransfertContext';
 
 // Lazy loading dei componenti per ottimizzare il bundle iniziale
-const Lobby = lazy(() => import('./Components/Lobby/Lobby'));
-const Game = lazy(() => import('./Components/Game/Game'));
-const Load = lazy(() => import('./Components/Load/Load'));
+const Lobby = lazy(() => import('./components/Lobby/Lobby'));
+const Game = lazy(() => import('./components/Game/Game'));
+const Load = lazy(() => import('./components/Load/Load'));
 
 function GameReRender() {
   const location = useLocation();

@@ -21,7 +21,7 @@ function createWindow() {
         height: 600,
         minWidth: 850,
         minHeight: 600,
-        icon: path.join(__dirname, 'frontend', 'src', 'assets', 'Images', 'logo.png'),
+        icon: path.join(__dirname, 'frontend', 'src', 'assets', 'Icons', 'png', 'logo.png'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
@@ -36,7 +36,7 @@ app.whenReady().then(() => {
     createWindow();
 
     Menu.setApplicationMenu(null);
-    const tray = new Tray(nativeImage.createFromPath('frontend/src/assets/Images/logo.png'));
+    const tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'frontend', 'src', 'assets', 'Icons', 'png', 'logo.png')));
         const trayMenu = Menu.buildFromTemplate([
             {
                 label: 'Exit',
@@ -58,7 +58,7 @@ app.on('activate', () => {
         createWindow();
 
         Menu.setApplicationMenu(null);
-        const tray = new Tray(nativeImage.createFromPath('frontend/src/assets/Images/logo.png'));
+        const tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'frontend', 'src', 'assets', 'Icons', 'png', 'logo.png')));
         const trayMenu = Menu.buildFromTemplate([
             {
                 label: 'Exit',
