@@ -11,14 +11,17 @@ Questo componente React rappresenta un bottone personalizzato per l'app MasterMi
 
 ## Funzionalità speciali
 - Se `className` è `quitButton` chiude l'app (Electron o browser) ❌
-- Se `className` è `mainMenuButton` naviga verso la lobby 🏠
+- Se `className` è `mainMenuButton` naviga verso la lobby dopo aver salvato 🏠
+- Se `className` è `newGameButton` naviga verso la partita avviandola
+- Se `className` è `continueGameButton` naviga verso la partita recuperando i salvataggi
 
 ## Utilizzo
 ```jsx
 <Button className="mainMenuButton">Vai al menu</Button>
 <Button className="quitButton">Esci</Button>
+<Button className="newGameButton">Vai al gioco</Button>
+<Button className="continueGameButton">Vai al gioco</Button>
 <Button>Normale</Button>
 ```
 
 🔗 Usa React Router per la navigazione
-🎮 Personalizza con le tue classi CSS
