@@ -53,24 +53,6 @@ ipcMain.on('quit-app', () => {
     saveAndQuit();
 });
 
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-
-        Menu.setApplicationMenu(null);
-        const tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'frontend', 'src', 'assets', 'Icons', 'png', 'logo.png')));
-        const trayMenu = Menu.buildFromTemplate([
-            {
-                label: 'Exit',
-                click: () => {
-                    saveAndQuit();
-                }
-            }
-        ]);
-        tray.setContextMenu(trayMenu);
-    }
-});
-
 // Funzione per salvare e chiudere l'app
 async function saveAndQuit() {
     try {
