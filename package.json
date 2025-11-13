@@ -6,15 +6,13 @@
   "scripts": {
     "java": "cd ./backend && mvnw.cmd spring-boot:run",
     "react": "cd ./frontend && npm run dev",
-    "electron": "electron .",
-    "project": "concurrently \"npm run react\" \"npm run electron\""
+    "project": "electron ."
   },
   "keywords": [],
   "author": "Nicolas Motta",
   "license": "ISC",
   "description": "This is a MasterMind game",
   "devDependencies": {
-    "concurrently": "^8.2.2",
     "electron": "^37.1.0",
     "electron-packager": "^17.1.2"
   },
