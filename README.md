@@ -1,6 +1,6 @@
-# 🎯 MasterMind
-
-![MasterMind Logo](./icon.png)
+<p align="center">
+   <img src="frontend/src/assets/Icons/png/logo.png" alt="MasterMind Logo" width="340" />
+</p>
 
 ## 📋 Indice
 
