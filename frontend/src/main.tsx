@@ -5,10 +5,34 @@ import './main.css'
 import { PositionProvider } from './contexts/PositionContext';
 import { WebSocketProvider } from './contexts/TransfertContext';
 
+// Gestione F11 -> fullscreen (toggle)
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen?.().catch(() => { /* ignore */ })
+  } else {
+    document.exitFullscreen?.().catch(() => { /* ignore */ })
+  }
+}
+
+// Intercetta F11 a livello globale; non interferisce con input attivi
+window.addEventListener('keydown', (e) => {
+  try {
+    if (e.key === 'F11') {
+      const activeTag = document.activeElement?.tagName || ''
+      // lascia il comportamento normale se si è su un campo di input/select/textarea
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag)) return
+      e.preventDefault()
+      toggleFullscreen()
+    }
+  } catch {
+    // non bloccare l'app in caso di errori imprevisti
+  }
+})
+
 // Lazy loading dei componenti per ottimizzare il bundle iniziale
-const Lobby = lazy(() => import('./Components/Lobby/Lobby'));
-const Game = lazy(() => import('./Components/Game/Game'));
-const Load = lazy(() => import('./Components/Load/Load'));
+const Lobby = lazy(() => import('./components/Lobby/Lobby'));
+const Game = lazy(() => import('./components/Game/Game'));
+const Load = lazy(() => import('./components/Load/Load'));
 
 function GameReRender() {
   const location = useLocation();

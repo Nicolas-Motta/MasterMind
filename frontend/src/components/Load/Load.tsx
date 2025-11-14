@@ -3,7 +3,7 @@
 import "./Load.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImage from "../../assets/Images/logo.png";
+import logoImage from "../../assets/Icons/png/logo.png";
 import { useWebSocket } from "../../contexts/TransfertContext"; 
 
 export default function Load() {

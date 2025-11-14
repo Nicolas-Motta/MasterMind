@@ -1,6 +1,6 @@
-# 🎯 MasterMind
-
-![MasterMind Logo](./icon.png)
+<p align="center">
+   <img src="frontend/src/assets/Icons/png/logo.png" alt="MasterMind Logo" width="340" />
+</p>
 
 ## 📋 Indice
 
@@ -234,7 +234,7 @@ MasterMindv2/
 │   ├── 📄 vite.config.ts        # Configurazione Vite
 │   ├── 📄 tsconfig.json         # Configurazione TypeScript
 │   ├── 📄 index.html            # Entry point HTML
-│   ├── 🗂️ public/              # Asset statici
+│   ├── 🗂️ public/               # Asset statici
 │   └── 🗂️ src/
 │       ├── 📄 main.tsx          # Entry point React
 │       ├── 📄 main.css          # Stili globali
@@ -365,13 +365,12 @@ Il gioco salva automaticamente lo stato in `backend/game.dat` utilizzando la ser
 - **Storage**: 1GB di spazio libero
 - **Node.js**: v18.0.0+
 - **Java**: JDK 21+
+- **Internet**: Per download dipendenze
 
 ### 🚀 **Raccomandati**
 - **OS**: Windows 11, macOS 12+, Ubuntu 20.04+
 - **RAM**: 8GB+
 - **Storage**: 2GB+ di spazio libero
-- **CPU**: Multi-core per compilazione rapida
-- **Internet**: Per download dipendenze
 
 ## 🐛 Troubleshooting
 
@@ -460,18 +459,11 @@ Usa GitHub Issues e includi:
 
 ---
 
-## 📄 Licenza
-
-Questo progetto è sotto licenza ISC. Vedi il file `LICENSE` per dettagli.
-
 ## 🙏 Ringraziamenti
 
 - 🎮 Ispirato dal classico gioco MasterMind di Mordecai Meirowitz
-- 🚀 Costruito con tecnologie open-source moderne
-- 👨‍💻 Sviluppato con passione per l'apprendimento
+- 🚀 Costruito con tecnologie open-source
 
 ---
 
-**🎯 Buon divertimento con MasterMind v2! 🎉**
-
-*Per domande o supporto, apri una issue su GitHub.*
+**🎯 Buon divertimento con MasterMind! 🎉**
